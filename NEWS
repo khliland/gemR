@@ -1,0 +1,16 @@
+NEWS file for package ER
+Effect + Residual Modelling
+Multivariate modeling of data after deflation of interfering effects. EF Mosleth et al. (2021) <doi:10.1038/s41598-021-82388-w> and EF Mosleth et al. (2020) <doi:10.1016/B978-0-12-409547-2.14882-6>.
+Kristian Hovde Liland
+
+##### Version 1.1.1
+Date: 10 October
+>> Corrected examples for function pls
+
+##### Version 1.1.0
+Date: 11 March 2021
+>> Added dataset and examples on Multiple Sclerosis, plus examples on Diabetes and Lactobacillus
+>> Added print.ER
+>> Adjusted behaviour of plot.ER
+>> Extended possibilities of confints
+>> Added reference
