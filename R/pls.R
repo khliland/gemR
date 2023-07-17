@@ -135,7 +135,10 @@ pls.GEM <- function(gem, effect, ncomp, newdata = NULL, gem2, validation, jackkn
   }
   object <- plsMod
   object$classes <- lda
-  object$data <- data
+  object$data    <- data
+  object$effect  <- effect
+  object$call.GEMpls <- match.call()
+  object$gem     <- gem
   # object <- list(classes = lda, data = data, pls = plsMod)
   if(jack)
     object$jack <- jt

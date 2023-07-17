@@ -145,6 +145,7 @@ GEM <- function(formula, data){
               highestLevel = design[[1]],
               featureNames = featureNames,
               df.used = dim(design)[1] - mod$df.residual,
+              data = data,
               call = match.call())
   class(ret) <- c("GEM", "list")
   ret
