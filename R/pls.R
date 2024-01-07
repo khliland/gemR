@@ -65,22 +65,29 @@ pls <- function(gem, ...){
 #' @method pls GEM
 #' @export
 pls.GEM <- function(gem, effect, ncomp, newdata = NULL, gem2, validation, jackknife = NULL, shave = NULL, df.used = NULL, ...){
+  classification <- FALSE
   if(!missing(gem2)){
     data <- data.frame(X = I(gem$ER.values[[effect]]),
                        y = I(gem2$ER.values[[effect]]))
     lda    <- NULL
   } else {
     if(length(effect) == 1){
-      data <- data.frame(X = I(gem$ER.values[[effect]]),
-                         y = I(gem$symbolicDesign[[effect]]),
-                         Yd = I(model.matrix(~y-1,data.frame(y=gem$symbolicDesign[[effect]]))))
+      if(is.factor(gem$symbolicDesign[[effect]])){
+        classification <- TRUE
+        data <- data.frame(X = I(gem$ER.values[[effect]]),
+                           y = I(gem$symbolicDesign[[effect]]),
+                           Yd = I(model.matrix(~y-1,data.frame(y=gem$symbolicDesign[[effect]]))))
+      } else {
+        data <- data.frame(X = I(gem$ER.values[[effect]]),
+                           y = I(gem$symbolicDesign[[effect]]),
+                           Yd = gem$symbolicDesign[[effect]])
+      }
     } else { # User supplied contrast
       data <- data.frame(X = I(gem$ER.values[[effect[[1]]]]),
                          y = effect[[2]],
                          Yd = effect[[2]])
     }
   }
-
   if(is.null(df.used)){
     df.used <- gem$df.used
   }
@@ -89,7 +96,8 @@ pls.GEM <- function(gem, effect, ncomp, newdata = NULL, gem2, validation, jackkn
   if(!is.null(newdata)){
     if(missing(gem2)){
       plsMod <- plsr(Yd ~ X, ncomp = ncomp, data = data, ...)
-      lda    <- lda_from_pls(plsMod, data$y, newdata, ncomp)
+      if(classification)
+        lda    <- lda_from_pls(plsMod, data$y, newdata, ncomp)
     } else {
       plsMod <- plsr(y ~ X, ncomp = ncomp, data = data, ...)
     }
@@ -104,7 +112,8 @@ pls.GEM <- function(gem, effect, ncomp, newdata = NULL, gem2, validation, jackkn
     } else {
       if(missing(gem2)){
         plsMod <- plsr(Yd ~ X, ncomp = ncomp, data = data, validation = validation, jackknife = jack, ...)
-        lda    <- lda_from_pls_cv(plsMod, data$X, data$y, ncomp)
+        if(classification)
+          lda    <- lda_from_pls_cv(plsMod, data$X, data$y, ncomp)
       } else {
         plsMod <- plsr(y ~ X, ncomp = ncomp, data = data, validation = validation, jackknife = jack, ...)
       }
@@ -134,7 +143,8 @@ pls.GEM <- function(gem, effect, ncomp, newdata = NULL, gem2, validation, jackkn
     }
   }
   object <- plsMod
-  object$classes <- lda
+  if(classification)
+    object$classes <- lda
   object$data    <- data
   object$effect  <- effect
   object$call.GEMpls <- match.call()
