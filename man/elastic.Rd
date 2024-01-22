@@ -3,6 +3,7 @@
 \name{elastic}
 \alias{elastic}
 \alias{elastic.GEM}
+\alias{coef.GEMglmnet}
 \title{Elastic-net modeling of GEM objects.}
 \usage{
 elastic(gem, ...)
@@ -51,7 +52,7 @@ plot(elasticMod)            # Model fit
 plot(elasticMod$glmnet.fit) # Coefficient trajectories
 
 # Select all proteins with non-zeros coefficients
-coefs     <- coef(elasticMod,s='lambda.min',exact=TRUE)
+coefs     <- coef(elasticMod, s='lambda.min', exact=TRUE)
 (selected <- rownames(coefs[[1]])[unique(unlist(lapply(coefs,
                       function(x)which(as.vector(x) != 0))))][-1])
 

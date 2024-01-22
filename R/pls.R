@@ -21,7 +21,7 @@
 #' @seealso \code{\link{GEM}}, \code{\link{elastic}} and \code{\link{confints}}.
 #'
 #' @importFrom plsVarSel shaving lda_from_pls lda_from_pls_cv
-#' @importFrom pls plsr cvsegments var.jack scores scoreplot loadings loadingplot R2 mvrValstats explvar
+#' @importFrom pls plsr cvsegments var.jack scores scoreplot loadings loadingplot corrplot R2 mvrValstats explvar
 #' @examples
 #' data(MS, package = "gemR")
 #' gem <- GEM(proteins ~ MS * cluster, data = MS[-1,])
@@ -170,6 +170,9 @@ pls::loadings
 #' @export loadingplot
 pls::loadingplot
 
+#' @export corrplot
+pls::corrplot
+
 #' @export R2
 pls::R2
 
@@ -178,3 +181,4 @@ pls::mvrValstats
 
 #' @export explvar
 pls::explvar
+
