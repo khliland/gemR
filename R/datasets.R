@@ -16,9 +16,9 @@
 #' without multiple sclerosis were considered as controls for this study. All patients with
 #' multiple sclerosis had relapsing remitting multiple sclerosis. The proteome were obtained
 #' on cerebrospinal fluid samples from all patients prior medical treatment for multiple
-#' sclerosis. It was discovered the patients separated into two clusters, called cluster 1 and
-#' cluster 2. This is utilised in the data analysis by considering the data as 2-way factorial
-#' design with the two factors: MS and clusters both on two levels.
+#' sclerosis. It was discovered the patients separated into two clusters, called group 1 and
+#' group 2. This is utilised in the data analysis by considering the data as 2-way factorial
+#' design with the two factors: MS and group both on two levels.
 #'
 #' @author Ellen Færgestad Mosleth
 #' @references

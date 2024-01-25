@@ -3,7 +3,7 @@
 ## Installation
 
 ``` r
-# Install release version from CRAN  
+# Install release version from CRAN (planned release February 2024)  
 install.packages("gemR")  
 # Install development version from GitHub  
 devtools::install_github("khliland/gemR")

@@ -21,6 +21,6 @@ below to see their documentation.
 \describe{
   \item{gridExtra}{\code{\link[gridExtra:arrangeGrob]{grid.arrange}}}
 
-  \item{pls}{\code{\link[pls:mvrVal]{R2}}, \code{\link[pls:scoreplot]{corrplot}}, \code{\link[pls:coef.mvr]{explvar}}, \code{\link[pls:scoreplot]{loadingplot}}, \code{\link[pls:scores]{loadings}}, \code{\link[pls:mvrVal]{mvrValstats}}, \code{\link[pls]{scoreplot}}, \code{\link[pls]{scores}}}
+  \item{pls}{\code{\link[pls:scoreplot]{corrplot}}, \code{\link[pls:coef.mvr]{explvar}}, \code{\link[pls:scoreplot]{loadingplot}}, \code{\link[pls:scores]{loadings}}, \code{\link[pls:mvrVal]{mvrValstats}}, \code{\link[pls:mvrVal]{R2}}, \code{\link[pls]{scoreplot}}, \code{\link[pls]{scores}}}
 }}
 

@@ -1,78 +1,116 @@
 library(gemR)
 data(MS)
 ms <- as.character(MS$MS)
-cluster <- as.numeric(MS$cluster)
+group <- as.numeric(MS$group)
 proteins <- unclass(MS$proteins)
+sex <- as.character(MS$sex)
+age <- as.numeric(MS$age)
 ##################################
 
 # The example assumes that the following objects are available in
 # R's Global Environment:
 # proteins - numeric matrix of proteins
 # ms       - character vector of MS ("no"/"yes")
-# cluster  - numeric vector of cluster origin
+# group    - numeric vector of groups discovered by cluster analysis
+# sex      - character vector of sex ("M"/"F")
+# age      - numeric vector of patient ages
 
+# Step 0 - Prepare data
 # Organise data as data.frame.
 MS.data <- data.frame(proteins = I(proteins),
                      ms = factor(ms),
-                     cluster = factor(cluster))
+                     group = factor(group),
+                     sex = factor(sex),
+                     age = age)
 
 # Step 1 - GLM:
-MS.gem <- GEM(proteins ~ ms + cluster, data = MS.data)
+MS.gem <- GEM(proteins ~ ms + group + sex + age, data = MS.data)
 
-# Matrices of effects and ER values can be extracted for custom analyses
+# Matrices of effects and ER values can be extracted for custom analyses.
+# Here shown for the 'ms' effect
 E.ms       <- MS.gem$effects$ms
-E.cluster  <- MS.gem$effects$cluster
 ER.ms      <- MS.gem$ER.values$ms
-ER.cluster <- MS.gem$ER.values$cluster
 
 # Step 2 - PLS
-ncomp <- 20
+ncomp <- 10
 # PLS analysis of 'ms' effect
-MS.pls.ms <- pls(MS.gem, 'ms', ncomp, validation = "CV",
-                 segments = 10, segment.type = "interleaved",
-                 jackknife = TRUE, df.used = 1)
+ms.pls <- pls(MS.gem, 'ms', ncomp,
+                 jackknife = TRUE)
 
 # Element extraction
 # Cross-validated classifications of 'ms' (# correct)
-colSums(MS.pls.ms$classes == as.numeric(MS.data$ms))
-# Parsimonious estimate from the above
-MS.ncomp       <- 4
-# Coefficients for 'ms' effect
-MS.coef.ms     <- coef(MS.pls.ms)
-# Scores and loadings
-MS.scores.ms   <- scores(MS.pls.ms)
-MS.loadings.ms <- loadings(MS.pls.ms)
-# Jackknife P-value estimates and significant subset
-MS.jack.ms     <- MS.pls.ms$jack[,1,4]
-MS.signif.ms   <- which(MS.jack.ms < 0.05)
+colSums(ms.pls$classes == as.numeric(MS.data$ms))
+# Parsimonious estimate of #components
+ms.ncomp    <- 2
+# Coefficients, scores and loadings for 'ms' effect
+ms.coef     <- coef(ms.pls)
+ms.scores   <- scores(ms.pls)
+ms.loadings <- loadings(ms.pls)
+# Jackknife P-value estimates, significant and subset
+ms.jack     <- ms.pls$jack[,1,ms.ncomp]
+ms.signif   <- ms.jack < 0.05
+ms.subset   <- which(ms.signif)
 
 # Example plots
 oldpar <- par(mfrow = c(2,2), mar = c(4,4,2,1))
-scoreplot(MS.pls.ms, main = "Scores", panel.first = abline(h=0, v=0, col="gray"),
-          col = MS.data$ms, pch = as.numeric(MS.data$cluster))
-loadingplot(MS.pls.ms, labels = "names", scatter = TRUE, main = "Loadings",
-            panel.first = abline(h=0, v=0, col="gray"))
-corrplot(MS.pls.ms, main = "Correlation loadings", label = "names")
-plot(colSums(MS.pls.ms$classes == as.numeric(MS.data$ms)),
-     ylab = "# correct", xlab = "# components", panel.first = grid(),
-     main = "Classification accuracy")
+scoreplot(ms.pls, main = "Scores (ms)", panel.first = abline(h=0, v=0, col="gray"),
+          col = MS.data$ms, pch = as.numeric(MS.data$group), cex = 0.7)
+loadingplot(ms.pls, scatter = TRUE, main = "Loadings (ms)",
+            col = c("gray", "black")[ms.signif+1], pch = c(1,15)[ms.signif+1],
+            panel.first = abline(h=0, v=0, col="gray"), cex = 0.7)
+corrplot(ms.pls, main = "Correlation loadings",
+         col = c("gray", "black")[ms.signif+1], pch = c(1,15)[ms.signif+1],
+         cex = 0.3)
+plot(ms.pls, ylim = c(0,100), cex = 0.7)
 par(oldpar)
 
 # Step 2 - Elastic Net
-# Elastic Net analysis of the 'cluster' effect
-MS.en.cluster <- elastic(MS.gem, 'cluster', validation = "LOO",
+# Elastic Net analysis of the 'group' effect
+MS.en.group <- elastic(MS.gem, 'group', validation = "LOO",
                          alpha = 0.5, family = "binomial")
 
 # Element extraction
-# Coefficients for 'cluster' effect
-MS.coef.cluster <- coef(MS.en.cluster)
+# Coefficients for 'group' effect
+MS.coef.group <- coef(MS.en.group)
 # Non-zero coefficients at optimal complexity
-nonZeroID <- which(MS.coef.cluster[,1] != 0)
+nonZeroID <- which(MS.coef.group[-1,1] != 0)
 nonZeroLab <- names(nonZeroID)
 
 # Example plots
 oldpar <- par(mfrow = c(3,1), mar = c(4,4,2,1))
-plot(MS.en.cluster$glmnet, xvar = "lambda")
-plot(MS.en.cluster)
+plot(MS.en.group$glmnet, xvar = "lambda")
+plot(MS.en.group)
 par(oldpar)
 
+
+#############################
+# PLS repeated on group
+group.pls <- pls(MS.gem, 'group', ncomp,
+              jackknife = TRUE)
+
+# Element extraction
+# Cross-validated classifications of 'group' (# correct)
+colSums(group.pls$classes == as.numeric(MS.data$group))
+# Parsimonious estimate of #components
+group.ncomp    <- 2
+# Coefficients, scores and loadings for 'group' effect
+group.coef     <- coef(group.pls)
+group.scores   <- scores(group.pls)
+group.loadings <- loadings(group.pls)
+# Jackknife P-value estimates, significant and subset
+group.jack     <- group.pls$jack[,1,group.ncomp]
+group.signif   <- group.jack < 0.05
+group.subset   <- which(group.signif)
+
+# Example plots
+oldpar <- par(mfrow = c(2,2), mar = c(4,4,2,1))
+scoreplot(group.pls, main = "Scores (group)", panel.first = abline(h=0, v=0, col="gray"),
+          col = MS.data$group, pch = as.numeric(MS.data$group), cex = 0.7)
+loadingplot(group.pls, scatter = TRUE, main = "Loadings (group)",
+            col = c("gray", "black")[group.signif+1], pch = c(1,15)[group.signif+1],
+            panel.first = abline(h=0, v=0, col="gray"), cex = 0.7)
+corrplot(group.pls, main = "Correlation loadings",
+         col = c("gray", "black")[group.signif+1], pch = c(1,15)[group.signif+1],
+         cex = 0.3)
+plot(group.pls, ylim = c(0,100), cex = 0.7)
+par(oldpar)

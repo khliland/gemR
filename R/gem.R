@@ -32,27 +32,27 @@
 #' @examples
 #' ## Multiple Sclerosis
 #' data(MS, package = "gemR")
-#' gem <- GEM(proteins ~ MS * cluster, data = MS)
+#' gem <- GEM(proteins ~ MS * group, data = MS)
 #' print(gem)
 #' plot(gem)                                       # Raw data, first feature
 #' plot(gem,2)                                     # Raw data, numbered feature
-#' plot(gem,'Q76L83', col='MS', pch='cluster')     # Selected colour and plot character
+#' plot(gem,'Q76L83', col='MS', pch='group')     # Selected colour and plot character
 #' plot(gem,'Q76L83', what='effect MS',
-#'      model.line='effect cluster')              # Comparison of factors (points and lines)
+#'      model.line='effect group')              # Comparison of factors (points and lines)
 #' \donttest{
 #'   # Example compound plot
 #'   old.par <- par(c("mfrow", "mar"))
 #'   # on.exit(par(old.par))
 #'   par(mfrow = c(3,3), mar = c(2,4,4,1))
-#'   plot(gem,'Q76L83')                                  # Raw data, named feature
-#'   plot(gem,'Q76L83', what='fits')                     # Fitted values
-#'   plot(gem,'Q76L83', what='residuals')                # Residuals
-#'   plot(gem,'Q76L83', what='effect MS')                # Effect levels
-#'   plot(gem,'Q76L83', what='effect cluster')           # ----||----
-#'   plot(gem,'Q76L83', what='effect MS:cluster')        # ----||----
-#'   plot(gem,'Q76L83', what='MS')                       # ER values
-#'   plot(gem,'Q76L83', what='cluster')                  # --------||---------
-#'   plot(gem,'Q76L83', what='MS:cluster')               # --------||---------
+#'   plot(gem,'Q76L83')                         # Raw data, named feature
+#'   plot(gem,'Q76L83', what='fits')            # Fitted values
+#'   plot(gem,'Q76L83', what='residuals')       # Residuals
+#'   plot(gem,'Q76L83', what='effect MS')       # Effect levels
+#'   plot(gem,'Q76L83', what='effect group')    # ----||----
+#'   plot(gem,'Q76L83', what='effect MS:group') # ----||----
+#'   plot(gem,'Q76L83', what='MS')              # ER values
+#'   plot(gem,'Q76L83', what='group')           # --------||---------
+#'   plot(gem,'Q76L83', what='MS:group')        # --------||---------
 #'   par(old.par)
 #' }
 #'
@@ -61,7 +61,7 @@
 #'
 #' # In general there can be more than two, effects, more than two levels, and continuous effects:
 #' # MS$three <- factor(c(rep(1:3,33),1:2))
-#' # gem3    <- GEM(proteins ~ MS * cluster + three, data = MS)
+#' # gem3    <- GEM(proteins ~ MS * group + three, data = MS)
 #'
 #'
 #' ## Lactobacillus

@@ -17,7 +17,7 @@
 #' @examples
 #' ## Multiple Sclerosis data
 #' data(MS, package = "gemR")
-#' gem <- GEM(proteins ~ MS * cluster, data = MS)
+#' gem <- GEM(proteins ~ MS * group, data = MS)
 #' elasticMod <- elastic(gem, 'MS', validation = "CV")
 #' sum(elasticMod$classes == MS$MS)
 #' plot(elasticMod)            # Model fit

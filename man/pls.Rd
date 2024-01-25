@@ -16,7 +16,7 @@ pls(gem, ...)
   validation,
   jackknife = NULL,
   shave = NULL,
-  df.used = NULL,
+  df.used = gem$df.used,
   ...
 )
 }
@@ -51,7 +51,7 @@ If using the \code{shave} options, the segment type is given as \code{type} inst
 }
 \examples{
 data(MS, package = "gemR")
-gem <- GEM(proteins ~ MS * cluster, data = MS[-1,])
+gem <- GEM(proteins ~ MS * group, data = MS[-1,])
 
 # Simple PLS using interleaved cross-validation
 plsMod <- pls(gem, 'MS', 6, validation = "CV",
@@ -78,7 +78,7 @@ scoreplot(plsModJ)
 scoreplot(plsModJ, comps=c(1,3))   # Selected components
 # Use MS categories for colouring and clusters for plot characters.
 scoreplot(plsModJ, col = gem$symbolicDesign[['MS']],
-                  pch = 20+as.numeric(gem$symbolicDesign[['cluster']]))
+                  pch = 20+as.numeric(gem$symbolicDesign[['group']]))
 loadingplot(plsModJ, scatter=TRUE) # scatter=TRUE for scatter plot
 }
 }

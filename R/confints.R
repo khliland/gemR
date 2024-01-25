@@ -33,9 +33,9 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("A", "Left", "Right"))
 #' @importFrom gridExtra grid.arrange
 #' @examples
 #' data(MS)
-#' # Compare MS and non-MS patients within cluster 1
-#' conf <- with(MS, confints(proteins[MS == "yes" & cluster == 1,],
-#'                           proteins[MS == "no"  & cluster == 1,]))
+#' # Compare MS and non-MS patients within group 1
+#' conf <- with(MS, confints(proteins[MS == "yes" & group == 1,],
+#'                           proteins[MS == "no"  & group == 1,]))
 #' p1 <- plot(conf)
 #' p2 <- plot(conf, nonZero = TRUE) # Only intervals without 0.
 #' grid.arrange(p1,p2)

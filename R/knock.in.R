@@ -15,13 +15,13 @@
 #'
 #' @examples
 #' data(MS, package = "gemR")
-#' gem <- GEM(proteins ~ MS * cluster, data = MS)
+#' gem <- GEM(proteins ~ MS * group, data = MS)
 #'
-#' # Extract interaction between 'MS' and 'cluster
-#' ER.isolated <- knock.in(gem, 'MS:cluster')
+#' # Extract interaction between 'MS' and 'group
+#' ER.isolated <- knock.in(gem, 'MS:group')
 #'
-#' # Remove main effect of 'cluster'
-#' ER.cleaned <- knock.out(gem, 'cluster')
+#' # Remove main effect of 'group'
+#' ER.cleaned <- knock.out(gem, 'group')
 knock.in <- function(object, effect, residuals = TRUE){
   ER <- object$effects[[effect[1]]]
   if(n.eff<-length(effect) > 1){
