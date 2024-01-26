@@ -1,4 +1,6 @@
-#' Plot function for GEM-based PLS
+#' Plot function and extraction method for GEM-based PLS
+#' @name plot.GEMpls
+#' @aliases plot.GEM.pls explvar.GEMpls
 #' @param x \code{GEMpls} object
 #' @param y Not used
 #' @param ylab \code{character} label for Y axis.
@@ -15,4 +17,10 @@ plot.GEMpls <- function(x,y, ylab="% correct", xlab="# comp.",
                         panel.first=grid(), type="o", ...){
   corr <- colMeans(x$classes == as.numeric(x$data$y))*100
   plot(corr, ylab=ylab, xlab=xlab, main=main, panel.first=panel.first, ...)
+}
+
+#' @rdname plot.GEMpls
+#' @export
+explvar.GEMpls <- function(x){
+  x$Xvar/x$Xtotvar
 }

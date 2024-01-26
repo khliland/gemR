@@ -12,4 +12,4 @@ Depends: R (>= 3.5.0)
 Imports: ggplot2, scales, gridExtra, glmnet, pls, plsVarSel
 License: GPL
 LazyData: TRUE
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1

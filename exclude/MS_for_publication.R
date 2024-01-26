@@ -33,7 +33,7 @@ ER.ms      <- MS.gem$ER.values$ms
 
 # Step 2 - PLS
 ncomp <- 10
-# PLS analysis of 'ms' effect
+# PLS analysis of the 'ms' effect with Jackknifing
 ms.pls <- pls(MS.gem, 'ms', ncomp,
                  jackknife = TRUE)
 
@@ -63,6 +63,11 @@ corrplot(ms.pls, main = "Correlation loadings",
          cex = 0.3)
 plot(ms.pls, ylim = c(0,100), cex = 0.7)
 par(oldpar)
+
+# PLS analysis of the 'ms' effect with Shaving (repeated sMC selection)
+ms.pls.sh <- pls(MS.gem, 'ms', ncomp,
+              shave = TRUE)
+
 
 # Step 2 - Elastic Net
 # Elastic Net analysis of the 'group' effect

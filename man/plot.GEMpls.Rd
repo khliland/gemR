@@ -2,7 +2,9 @@
 % Please edit documentation in R/pls.plot.R
 \name{plot.GEMpls}
 \alias{plot.GEMpls}
-\title{Plot function for GEM-based PLS}
+\alias{plot.GEM.pls}
+\alias{explvar.GEMpls}
+\title{Plot function and extraction method for GEM-based PLS}
 \usage{
 \method{plot}{GEMpls}(
   x,
@@ -14,6 +16,8 @@
   type = "o",
   ...
 )
+
+explvar.GEMpls(x)
 }
 \arguments{
 \item{x}{\code{GEMpls} object}
@@ -33,5 +37,5 @@
 \item{...}{additional arguments for \code{plot()}.}
 }
 \description{
-Plot function for GEM-based PLS
+Plot function and extraction method for GEM-based PLS
 }
