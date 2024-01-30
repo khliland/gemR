@@ -1,4 +1,4 @@
-#' @aliases elastic elastic.GEM
+#' @aliases elastic elastic.GEM coef.GEMglmnet
 #' @name elastic
 #' @title Elastic-net modeling of GEM objects.
 #' @param gem Object of class \code{GEM}.
@@ -17,16 +17,15 @@
 #' @examples
 #' ## Multiple Sclerosis data
 #' data(MS, package = "gemR")
-#' gem <- GEM(proteins ~ MS * cluster, data = MS)
+#' gem <- GEM(proteins ~ MS * group, data = MS)
 #' elasticMod <- elastic(gem, 'MS', validation = "CV")
 #' sum(elasticMod$classes == MS$MS)
 #' plot(elasticMod)            # Model fit
 #' plot(elasticMod$glmnet.fit) # Coefficient trajectories
 #'
 #' # Select all proteins with non-zeros coefficients
-#' coefs     <- coef(elasticMod,s='lambda.min',exact=TRUE)
-#' (selected <- rownames(coefs[[1]])[unique(unlist(lapply(coefs,
-#'                       function(x)which(as.vector(x) != 0))))][-1])
+#' coefs     <- coef(elasticMod)
+#' (selected <- names(which(coefs[,1] != 0)))
 #'
 #' \donttest{
 #' ## Diabetes data
@@ -92,4 +91,9 @@ elastic.GEM <- function(gem, effect, alpha = 0.5, newdata = NULL, validation, se
   # object <- list(classes = classEl, data = data, glmnet = cv.glm)
   class(object) <- c('GEMglmnet','cv.glmnet','list')
   object
+}
+
+#' @export
+coef.GEMglmnet <- function(object, s='lambda.min', exact=TRUE, ...){
+  do.call(cbind, lapply(glmnet::coef.glmnet(object, s=s, exact=exact, ...), as.matrix))
 }

@@ -21,10 +21,10 @@
 #' @seealso \code{\link{GEM}}, \code{\link{elastic}} and \code{\link{confints}}.
 #'
 #' @importFrom plsVarSel shaving lda_from_pls lda_from_pls_cv
-#' @importFrom pls plsr cvsegments var.jack scores scoreplot loadings loadingplot R2 mvrValstats explvar
+#' @importFrom pls plsr cvsegments var.jack scores scoreplot loadings loadingplot corrplot R2 mvrValstats explvar
 #' @examples
 #' data(MS, package = "gemR")
-#' gem <- GEM(proteins ~ MS * cluster, data = MS[-1,])
+#' gem <- GEM(proteins ~ MS * group, data = MS[-1,])
 #'
 #' # Simple PLS using interleaved cross-validation
 #' plsMod <- pls(gem, 'MS', 6, validation = "CV",
@@ -51,7 +51,7 @@
 #' scoreplot(plsModJ, comps=c(1,3))   # Selected components
 #' # Use MS categories for colouring and clusters for plot characters.
 #' scoreplot(plsModJ, col = gem$symbolicDesign[['MS']],
-#'                   pch = 20+as.numeric(gem$symbolicDesign[['cluster']]))
+#'                   pch = 20+as.numeric(gem$symbolicDesign[['group']]))
 #' loadingplot(plsModJ, scatter=TRUE) # scatter=TRUE for scatter plot
 #' }
 #' @rdname pls
@@ -64,7 +64,7 @@ pls <- function(gem, ...){
 #' @rdname pls
 #' @method pls GEM
 #' @export
-pls.GEM <- function(gem, effect, ncomp, newdata = NULL, gem2, validation, jackknife = NULL, shave = NULL, df.used = NULL, ...){
+pls.GEM <- function(gem, effect, ncomp, newdata = NULL, gem2, validation, jackknife = NULL, shave = NULL, df.used = gem$df.used, ...){
   classification <- FALSE
   if(!missing(gem2)){
     data <- data.frame(X = I(gem$ER.values[[effect]]),
@@ -87,9 +87,6 @@ pls.GEM <- function(gem, effect, ncomp, newdata = NULL, gem2, validation, jackkn
                          y = effect[[2]],
                          Yd = effect[[2]])
     }
-  }
-  if(is.null(df.used)){
-    df.used <- gem$df.used
   }
   jack   <- ifelse(is.null(jackknife), FALSE, TRUE)
   shaved <- ifelse(is.null(shave), FALSE, TRUE)
@@ -152,29 +149,11 @@ pls.GEM <- function(gem, effect, ncomp, newdata = NULL, gem2, validation, jackkn
   # object <- list(classes = lda, data = data, pls = plsMod)
   if(jack)
     object$jack <- jt
-  if(shaved)
+  if(shaved){
     object$shave <- sh
-  class(object) <- c('GEMpls','mvr','list')
+    class(object) <- c('GEMpls','list')
+  } else {
+    class(object) <- c('GEMpls','mvr','list')
+  }
   object
 }
-
-#' @export scores
-pls::scores
-
-#' @export scoreplot
-pls::scoreplot
-
-#' @export loadings
-pls::loadings
-
-#' @export loadingplot
-pls::loadingplot
-
-#' @export R2
-pls::R2
-
-#' @export mvrValstats
-pls::mvrValstats
-
-#' @export explvar
-pls::explvar
