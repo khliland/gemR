@@ -4,25 +4,46 @@
 \alias{plot.GEMpls}
 \alias{plot.GEM.pls}
 \alias{explvar.GEMpls}
+\alias{print.GEMpls}
+\alias{summary.GEMpls}
+\alias{scores}
+\alias{scoreplot}
+\alias{loadings}
+\alias{loadingplot}
+\alias{corrplot}
+\alias{R2}
+\alias{mvrValstats}
+\alias{explvar}
 \title{Plot function and extraction method for GEM-based PLS}
 \usage{
-\method{plot}{GEMpls}(
-  x,
-  y,
-  ylab = "\% correct",
-  xlab = "# comp.",
-  main = paste0("CV accuracy (", x$effect, ")"),
-  panel.first = grid(),
-  type = "o",
-  ...
-)
+\method{plot}{GEMpls}(x, y, ...)
 
-explvar.GEMpls(x)
+\method{print}{GEMpls}(x, ...)
+
+\method{summary}{GEMpls}(object, ...)
+
+scores(object, ...)
+
+scoreplot(object, ...)
+
+loadings(object, ...)
+
+loadingplot(object, ...)
+
+corrplot(object, ...)
+
+R2(object, ...)
+
+mvrValstats(object, ...)
+
+explvar(object, ...)
 }
 \arguments{
-\item{x}{\code{GEMpls} object}
+\item{x, object}{\code{GEMpls} object}
 
 \item{y}{Not used}
+
+\item{...}{additional arguments for \code{plot()}.}
 
 \item{ylab}{\code{character} label for Y axis.}
 
@@ -33,8 +54,6 @@ explvar.GEMpls(x)
 \item{panel.first}{\code{expression} to be evaluated after the plot axes are set up but before any plotting takes place. This can be useful for drawing background grids or scatterplot smooths. Note that this works by lazy evaluation: passing this argument from other plot methods may well not work since it may be evaluated too early.}
 
 \item{type}{\code{character} plot type (see ?plot).}
-
-\item{...}{additional arguments for \code{plot()}.}
 }
 \description{
 Plot function and extraction method for GEM-based PLS

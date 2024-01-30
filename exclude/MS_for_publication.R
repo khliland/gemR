@@ -52,7 +52,7 @@ ms.signif   <- ms.jack < 0.05
 ms.subset   <- which(ms.signif)
 
 # Example plots
-oldpar <- par(mfrow = c(2,2), mar = c(4,4,2,1))
+oldpar <- par(mfrow = c(2,2), mar = c(4,4,2,1), mgp = c(2.5, 1, 0))
 scoreplot(ms.pls, main = "Scores (ms)", panel.first = abline(h=0, v=0, col="gray"),
           col = MS.data$ms, pch = as.numeric(MS.data$group), cex = 0.7)
 loadingplot(ms.pls, scatter = TRUE, main = "Loadings (ms)",
@@ -68,6 +68,19 @@ par(oldpar)
 ms.pls.sh <- pls(MS.gem, 'ms', ncomp,
               shave = TRUE)
 
+# Simplest model that retains maximum performance and corresponding variables
+min.red        <- ms.pls.sh$shave$min.red
+optimal.subset <- ms.pls.sh$shave$variables[[min.red+1]]
+
+# Find the error level of classifying all samples as the majority class/level
+maxClass <- function(x){x <- table(x); 1-max(x)/sum(x)}
+bestProp <- maxClass(ms.pls.sh$gem$data[[ms.pls.sh$effect]])
+
+# Plot shaving results
+plot(ms.pls.sh, ylim = c(0, bestProp), ylab = "% error", main = "Shaving")
+abline(h = bestProp, lty = 2); grid()
+legend(26,0.35, legend = "Majority class error", lty = 2)
+
 
 # Step 2 - Elastic Net
 # Elastic Net analysis of the 'group' effect
@@ -82,7 +95,7 @@ nonZeroID <- which(MS.coef.group[-1,1] != 0)
 nonZeroLab <- names(nonZeroID)
 
 # Example plots
-oldpar <- par(mfrow = c(3,1), mar = c(4,4,2,1))
+oldpar <- par(mfrow = c(3,1), mar = c(4,4,2,1), mgp = c(2.5, 1, 0))
 plot(MS.en.group$glmnet, xvar = "lambda")
 plot(MS.en.group)
 par(oldpar)

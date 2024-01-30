@@ -149,32 +149,11 @@ pls.GEM <- function(gem, effect, ncomp, newdata = NULL, gem2, validation, jackkn
   # object <- list(classes = lda, data = data, pls = plsMod)
   if(jack)
     object$jack <- jt
-  if(shaved)
+  if(shaved){
     object$shave <- sh
-  class(object) <- c('GEMpls','mvr','list')
+    class(object) <- c('GEMpls','list')
+  } else {
+    class(object) <- c('GEMpls','mvr','list')
+  }
   object
 }
-
-#' @export scores
-pls::scores
-
-#' @export scoreplot
-pls::scoreplot
-
-#' @export loadings
-pls::loadings
-
-#' @export loadingplot
-pls::loadingplot
-
-#' @export corrplot
-pls::corrplot
-
-#' @export R2
-pls::R2
-
-#' @export mvrValstats
-pls::mvrValstats
-
-#' @export explvar
-pls::explvar
