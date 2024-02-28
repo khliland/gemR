@@ -6,8 +6,8 @@
 #' @param y Response name or number.
 #' @param what What part of GEM to plot; \code{raw} data (default), \code{fits}, \code{residuals} or
 #' a named model effect (can be combined with 'effect', see \code{Examples}).
-#' @param col Color of points, defaults to grouping. Usually set to a factor name.
-#' @param pch Plot character of points, defaults to 1. Usually set to a factor name.
+#' @param col Color of points, defaults to grouping. Usually set to a factor name or a column name in the input data with custom colours.
+#' @param pch Plot character of points, defaults to 1. Usually set to a factor name or a column name in the input data with custom symbols
 #' @param model.line Include line indicating estimates, default = TRUE. Can be an effect name.
 #' @param ylim Y axis limits (\code{numeric}, but defaults to NULL)
 #' @param xlab X label (\code{character})
@@ -167,12 +167,22 @@ plot.GEM <- function(x, y = 1, what = "raw", col = NULL, pch = NULL,
   # Set defaults
   if(is.null(col))
     col <- match(x$highestLevel,unique(x$highestLevel))
-  if(length(col)==1 && col %in% colnames(x$symbolicDesign))
+  if(length(col) == 1 && col %in% colnames(x$symbolicDesign)){
     col <- match(x$symbolicDesign[,col],unique(x$symbolicDesign[,col]))
+  } else {
+    if(length(col) == 1 && col %in% colnames(x$data)){
+      col <- x$data[,col]
+    }
+  }
   if(is.null(pch))
     pch <- 1
-  if(length(pch) == 1 && pch %in% colnames(x$symbolicDesign))
+  if(length(pch) == 1 && pch %in% colnames(x$symbolicDesign)){
     pch <- match(x$symbolicDesign[,pch],unique(x$symbolicDesign[,pch]))
+  } else {
+    if(length(pch) == 1 && pch %in% colnames(x$data)){
+      pch <- x$data[,pch]
+    }
+  }
   has.main <- !is.null(main)
   dataLine   <- NULL
 
@@ -224,8 +234,16 @@ plot.GEM <- function(x, y = 1, what = "raw", col = NULL, pch = NULL,
         # lines(dataLine)
       }
       if(model.line == "raw"){
-        dataLine   <- x$fitted.values[,y]
+        dataLine <- x$fitted.values[,y]
         # lines(dataLine)
+      }
+      if(model.line %in% paste("mean", colnames(x$symbolicDesign))){
+        model.line <- strsplit( model.line,"mean ")[[1]][2]
+        dataLine <- aggregate(x$data[as.character(x$call[[2]][[2]])],by=list(x$symbolicDesign[[model.line]]),mean)[x$symbolicDesign[[model.line]],-1]
+      }
+      if(model.line %in% paste("mean", colnames(x$data))){
+        model.line <- strsplit( model.line,"mean ")[[1]][2]
+        dataLine <- aggregate(unclass(x$data[[as.character(x$call[[2]][[2]])]]),by=list(x$data[[model.line]]),mean)[x$data[[model.line]],-1][,y]
       }
     }
   }

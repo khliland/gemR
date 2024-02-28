@@ -2,8 +2,8 @@ Encoding: UTF-8
 Package: gemR
 Type: Package
 Title: Effect + Residual Modelling
-Version: 1.1.5
-Date: 2024-01-30
+Version: 1.1.6
+Date: 2024-02-28
 Authors@R: c(person("Kristian Hovde", "Liland", role = c("aut", "cre"),
                      email = "kristian.liland@nmbu.no"),
               person("Ellen Færgestad", "Mosleth", role = "ctb"))

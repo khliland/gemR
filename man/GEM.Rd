@@ -41,9 +41,9 @@ tableGEM(object, variable)
 \item{what}{What part of GEM to plot; \code{raw} data (default), \code{fits}, \code{residuals} or
 a named model effect (can be combined with 'effect', see \code{Examples}).}
 
-\item{col}{Color of points, defaults to grouping. Usually set to a factor name.}
+\item{col}{Color of points, defaults to grouping. Usually set to a factor name or a column name in the input data with custom colours.}
 
-\item{pch}{Plot character of points, defaults to 1. Usually set to a factor name.}
+\item{pch}{Plot character of points, defaults to 1. Usually set to a factor name or a column name in the input data with custom symbols}
 
 \item{model.line}{Include line indicating estimates, default = TRUE. Can be an effect name.}
 
