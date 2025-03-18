@@ -5,9 +5,11 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("A", "Left", "Right"))
 #' @name confints
 #' @title Confidence Intervals of Effect Differences
 #'
-#' @param X1 \code{data.frame} containing first effect.
+#' @param X1 \code{data.frame} containing first effect or \code{GEM} object for ER matrix based intervals.
 #' @param X2 \code{data.frame} containing second effect.
 #' @param confidence Level of confidence, default = 0.95.
+#' @param factor (\code{character} or \code{numeric}) indicating which factor to use in ER based intervals (defaul = 1).
+#' @param levels \code{vector} (\code{character} or \code{numeric}) indicating which factor levels to. use in ER based intervals (default = c(1,2)).
 #' @param x Object of class \code{confint}.
 #' @param y Not used.
 #' @param xlab X label (\code{character})
@@ -40,13 +42,24 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("A", "Left", "Right"))
 #' p2 <- plot(conf, nonZero = TRUE) # Only intervals without 0.
 #' grid.arrange(p1,p2)
 #'
+#' # Comparison repeated but based on ER matrices
+#' gem <- GEM(proteins ~ MS * group, data = MS)
+#' confGEM <- confints(gem, factor="MS:group", levels=c("yes.1","no.1"))
+#' p1g <- plot(confGEM)
+#' p2g <- plot(confGEM, nonZero = TRUE) # Only intervals without 0.
+#' grid.arrange(p1g,p2g)
+#'
 #' # Shorter plot with labels
 #' confShort <- conf[1:10,]
 #' p1 <- plot(confShort, labels = TRUE)
 #' p2 <- plot(confShort, labels = TRUE, nonZero = TRUE)
 #' grid.arrange(p1,p2)
 #' @export
-confints <-function(X1, X2, confidence = 0.95, df.used = 0){
+confints <- function(X1, ...) UseMethod("confints")
+
+#' @rdname confints
+#' @export
+confints.default <-function(X1, X2, confidence = 0.95, df.used = 0, ...){
   k <- dim(X1)[2]
   A1 <- apply(X1, 2, mean, na.rm=TRUE)
   A2 <- apply(X2, 2, mean, na.rm=TRUE)
@@ -64,9 +77,26 @@ confints <-function(X1, X2, confidence = 0.95, df.used = 0){
   return(Out)
 }
 
+#' @rdname confints
+#' @export
+confints.GEM <- function(X1, factor = 1, levels = c(1,2), confidence = 0.95, df.used = X1$df.used, ...){
+  dat <- X1$ER.values[[factor]]
+  design <- X1$symbolicDesign[[factor]]
+  df.used <- df.used + 0
+  if(is.numeric(levels)){
+    X1 <- dat[design==levels(design)[levels[1]],, drop=FALSE]
+    X2 <- dat[design==levels(design)[levels[2]],, drop=FALSE]
+  } else {
+    X1 <- dat[design==levels[1],, drop=FALSE]
+    X2 <- dat[design==levels[2],, drop=FALSE]
+  }
+  confints(X1, X2, confidence=confidence, df.used=df.used, ...)
+}
+
 #' @export
 #' @rdname confints
-plot.confints <- function(x, y, xlab = '', ylab = 'normalised log2', sorted = TRUE, labels = FALSE, nonZero = FALSE,
+plot.confints <- function(x, y, xlab = '', ylab = 'values',
+                          sorted = TRUE, labels = FALSE, nonZero = FALSE,
                           xlim = NULL, ylim = NULL, text.pt = 12, ...){
   if(is.logical(sorted) && sorted){
     x <- x[order(x$A),,drop=FALSE]

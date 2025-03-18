@@ -7,7 +7,7 @@
 \alias{tableGEM}
 \title{General Effect Modelling}
 \usage{
-GEM(formula, data)
+GEM(formula, data, contrasts = "contr.sum")
 
 \method{print}{GEM}(x, ...)
 
@@ -31,6 +31,8 @@ tableGEM(object, variable)
 \item{formula}{a model formula specifying features and effects.}
 
 \item{data}{a \code{data.frame} containing response variables (features) and design factors or other groupings/continuous variables.}
+
+\item{contrasts}{a \code{character} containing the primary contrasts for use with \code{mixlm::lm} (default = "contr.sum").}
 
 \item{x}{Object of class \code{GEM}.}
 

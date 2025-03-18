@@ -3,15 +3,28 @@
 \name{confints}
 \alias{confints}
 \alias{plot.confints}
+\alias{confints.default}
+\alias{confints.GEM}
 \title{Confidence Intervals of Effect Differences}
 \usage{
-confints(X1, X2, confidence = 0.95, df.used = 0)
+confints(X1, ...)
+
+\method{confints}{default}(X1, X2, confidence = 0.95, df.used = 0, ...)
+
+\method{confints}{GEM}(
+  X1,
+  factor = 1,
+  levels = c(1, 2),
+  confidence = 0.95,
+  df.used = X1$df.used,
+  ...
+)
 
 \method{plot}{confints}(
   x,
   y,
   xlab = "",
-  ylab = "normalised log2",
+  ylab = "values",
   sorted = TRUE,
   labels = FALSE,
   nonZero = FALSE,
@@ -22,13 +35,19 @@ confints(X1, X2, confidence = 0.95, df.used = 0)
 )
 }
 \arguments{
-\item{X1}{\code{data.frame} containing first effect.}
+\item{X1}{\code{data.frame} containing first effect or \code{GEM} object for ER matrix based intervals.}
+
+\item{...}{Further arguments to \code{qplot}.}
 
 \item{X2}{\code{data.frame} containing second effect.}
 
 \item{confidence}{Level of confidence, default = 0.95.}
 
 \item{df.used}{Optional argument indicating how many degrees of freedom have been consumed during deflation. Default = 0.}
+
+\item{factor}{(\code{character} or \code{numeric}) indicating which factor to use in ER based intervals (defaul = 1).}
+
+\item{levels}{\code{vector} (\code{character} or \code{numeric}) indicating which factor levels to. use in ER based intervals (default = c(1,2)).}
 
 \item{x}{Object of class \code{confint}.}
 
@@ -49,8 +68,6 @@ confints(X1, X2, confidence = 0.95, df.used = 0)
 \item{ylim}{Limits of the vertical scale.}
 
 \item{text.pt}{Size scaling of text in the plot (default = 16).}
-
-\item{...}{Further arguments to \code{qplot}.}
 }
 \value{
 An object of class \code{confints}, which holds
@@ -69,6 +86,13 @@ conf <- with(MS, confints(proteins[MS == "yes" & group == 1,],
 p1 <- plot(conf)
 p2 <- plot(conf, nonZero = TRUE) # Only intervals without 0.
 grid.arrange(p1,p2)
+
+# Comparison repeated but based on ER matrices
+gem <- GEM(proteins ~ MS * group, data = MS)
+confGEM <- confints(gem, factor="MS:group", levels=c("yes.1","no.1"))
+p1g <- plot(confGEM)
+p2g <- plot(confGEM, nonZero = TRUE) # Only intervals without 0.
+grid.arrange(p1g,p2g)
 
 # Shorter plot with labels
 confShort <- conf[1:10,]

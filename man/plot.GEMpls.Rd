@@ -44,16 +44,6 @@ explvar(object, ...)
 \item{y}{Not used}
 
 \item{...}{additional arguments for \code{plot()}.}
-
-\item{ylab}{\code{character} label for Y axis.}
-
-\item{xlab}{\code{character} label for X axis.}
-
-\item{main}{\code{character} main header.}
-
-\item{panel.first}{\code{expression} to be evaluated after the plot axes are set up but before any plotting takes place. This can be useful for drawing background grids or scatterplot smooths. Note that this works by lazy evaluation: passing this argument from other plot methods may well not work since it may be evaluated too early.}
-
-\item{type}{\code{character} plot type (see ?plot).}
 }
 \description{
 Plot function and extraction method for GEM-based PLS

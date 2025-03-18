@@ -2,6 +2,7 @@
 #'
 #' @param formula a model formula specifying features and effects.
 #' @param data a \code{data.frame} containing response variables (features) and design factors or other groupings/continuous variables.
+#' @param contrasts a \code{character} containing the primary contrasts for use with \code{mixlm::lm} (default = "contr.sum").
 #' @param x Object of class \code{GEM}.
 #' @param y Response name or number.
 #' @param what What part of GEM to plot; \code{raw} data (default), \code{fits}, \code{residuals} or
@@ -17,8 +18,9 @@
 #' @param object GEM object.
 #' @param variable Numeric for selecting a variable for extraction.
 #' @importFrom graphics lines plot
-#' @importFrom stats coef lm model.matrix na.omit predict pt qt sd
+#' @importFrom stats coef model.matrix na.omit predict pt qt sd aggregate model.frame
 #' @importFrom utils data
+#' @importFrom mixlm lm
 #'
 #' @return \code{GEM} returns an object of class \code{GEM} containing effects, ER values (effect + residuals),
 #' fitted values, residuals, features, coefficients, dummy design, symbolic design, dimensions,
@@ -86,15 +88,18 @@
 #'     pch='T2D')                         # Selected colour and plot character
 #'
 #' @export
-GEM <- function(formula, data){
+GEM <- function(formula, data, contrasts = "contr.sum"){
   # Handle formulas
   mf <- match.call(expand.dots = FALSE)                         # Bokholderi på input-navn
-  mf[[1L]] <- as.name("model.frame")                            # Bytte fra GEM til model.frame
-  old.opt <- options(contrasts = c("contr.sum","contr.poly"))   # Bytte fra treatment til sum-to-zero
-  mf <- eval(mf, parent.frame())                                # Evaluerer input til GEM som data.frame utenfor GEM-funksjonen
-  mm <- model.matrix(mod <- lm(mf))                             # Koder om faktorer til dummy, lager matrise av prediktorer
+  mf[[1L]] <- as.name("lm")                            # Bytte fra GEM til model.frame
+  #mf[[1L]] <- as.name("model.frame")                            # Bytte fra GEM til model.frame
+  #  old.opt <- options(contrasts = c("contr.sum","contr.poly"))   # Bytte fra treatment til sum-to-zero
+  mod <- eval(mf, parent.frame())
+  mf <- model.frame(mod)
+#  mf <- eval(mf, parent.frame())                                # Evaluerer input til GEM som data.frame utenfor GEM-funksjonen
+  mm <- model.matrix(mod <- lm(mf, contrasts=contrasts))        # Koder om faktorer til dummy, lager matrise av prediktorer
   mmAssign <- attr(mm,'assign')
-  options(old.opt)                                              # Tilbake til tidligere parametrisering
+#  options(old.opt)                                              # Tilbake til tidligere parametrisering
   factorCombinations <- attr(attr(mf, "terms"),"factors")       # Tar ut effektnavn og samspillseffektnavn
   variables <- mf[[1]]                                          # Henter ut responsen(e)
   # Dimensions
@@ -103,9 +108,10 @@ GEM <- function(formula, data){
   N.eff <- dim(factorCombinations)[2]
   dims  <- c(N=N,p=p,N.eff=N.eff)
   # Aggregate mean values and mean effect values
-  mr     <- do.call(interaction,mf[-1]) # All subgroups
-  u      <- levels(mr)
-  design <- data.frame(mr)
+  design <- data.frame(mf=apply(sapply(mf[-1], as.character), 1, paste0, collapse="."))
+#  mr     <- do.call(interaction,mf[-1]) # All subgroups
+#  u      <- levels(mr)
+#  design <- data.frame(mr)
   residuals    <- residuals(mod)
   coefficients <- coef(mod)
   effects      <- list()
