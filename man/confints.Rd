@@ -101,5 +101,5 @@ p2 <- plot(confShort, labels = TRUE, nonZero = TRUE)
 grid.arrange(p1,p2)
 }
 \seealso{
-\code{\link{GEM}}, \code{\link{elastic}} and \code{\link{pls}}.
+Analyses using \code{GEM}: \code{\link{elastic}}, \code{\link{pca}}, \code{\link{sca}}, \code{\link{neuralnet}}, \code{\link{pls}}.
 }

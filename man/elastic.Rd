@@ -23,7 +23,7 @@ elastic(gem, ...)
 \arguments{
 \item{gem}{Object of class \code{GEM}.}
 
-\item{...}{Additional arguments for \code{pls::cvsegments}.}
+\item{...}{Additional arguments for \code{\link[glmnet]{glmnet}}.}
 
 \item{effect}{The effect to be used as response.}
 
@@ -35,7 +35,7 @@ elastic(gem, ...)
 
 \item{segments}{number of segments or list of segments (optional)}
 
-\item{measure}{Type of performance summary, default = 'class' (see \code{\link{glmnet}})}
+\item{measure}{Type of performance summary, default = 'class' (see \code{\link[glmnet]{glmnet}})}
 
 \item{family}{Type of model response, default = 'multinomial'.}
 }
@@ -63,5 +63,6 @@ elasticMod <- elastic(gem.Dia, 'T2D', validation = "LOO")
 }
 }
 \seealso{
-\code{\link{GEM}}, \code{\link{pls}} and \code{\link{confints}}.
+Analyses using \code{GEM}: \code{\link{pca}}, \code{\link{sca}}, \code{\link{neuralnet}}, \code{\link{pls}}.
+Confidence interval plots: \code{\link{confints}}. Convenience knock-in and knock-out of effects: \code{\link{knock.in}}.
 }

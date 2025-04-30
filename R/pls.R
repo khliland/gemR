@@ -18,7 +18,8 @@
 #'
 #' @details If using the \code{shave} options, the segment type is given as \code{type} instead of \code{segment.type} (see examples).
 #'
-#' @seealso \code{\link{GEM}}, \code{\link{elastic}} and \code{\link{confints}}.
+#' @seealso Analyses using \code{GEM}: \code{\link{elastic}}, \code{\link{pca}}, \code{\link{sca}}, \code{\link{neuralnet}}.
+#' Confidence interval plots: \code{\link{confints}}. Convenience knock-in and knock-out of effects: \code{\link{knock.in}}.
 #'
 #' @importFrom plsVarSel shaving lda_from_pls lda_from_pls_cv
 #' @importFrom pls plsr cvsegments var.jack scores scoreplot loadings loadingplot corrplot R2 mvrValstats explvar

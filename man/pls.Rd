@@ -83,5 +83,6 @@ loadingplot(plsModJ, scatter=TRUE) # scatter=TRUE for scatter plot
 }
 }
 \seealso{
-\code{\link{GEM}}, \code{\link{elastic}} and \code{\link{confints}}.
+Analyses using \code{GEM}: \code{\link{elastic}}, \code{\link{pca}}, \code{\link{sca}}, \code{\link{neuralnet}}.
+Confidence interval plots: \code{\link{confints}}. Convenience knock-in and knock-out of effects: \code{\link{knock.in}}.
 }

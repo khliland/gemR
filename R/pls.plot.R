@@ -55,31 +55,51 @@ summary.GEMpls <- function(object,...){
 }
 
 #' @rdname plot.GEMpls
+#' @importFrom HDANOVA scores
 #' @export
 scores <- function(object, ...){
-  class(object) <- c("mvr", "list")
-  pls::scores(object, ...)
+  if(inherits(object, "asca")){
+    HDANOVA::scores(object, ...)
+  } else {
+    class(object) <- c("mvr", "list")
+    pls::scores(object, ...)
+  }
 }
 
 #' @rdname plot.GEMpls
+#' @importFrom HDANOVA scoreplot
 #' @export
 scoreplot <- function(object, ...){
-  class(object) <- c("mvr", "list")
-  pls::scoreplot(object, ...)
+  if(inherits(object, "asca")){
+    HDANOVA::scoreplot(object, ...)
+  } else {
+    class(object) <- c("mvr", "list")
+    pls::scoreplot(object, ...)
+  }
 }
 
 #' @rdname plot.GEMpls
+#' @importFrom HDANOVA loadings
 #' @export
 loadings <- function(object, ...){
-  class(object) <- c("mvr", "list")
-  pls::loadings(object, ...)
+  if(inherits(object, "asca")){
+    HDANOVA::loadings(object, ...)
+  } else {
+    class(object) <- c("mvr", "list")
+    pls::loadings(object, ...)
+  }
 }
 
 #' @rdname plot.GEMpls
+#' @importFrom HDANOVA loadingplot
 #' @export
 loadingplot <- function(object, ...){
-  class(object) <- c("mvr", "list")
-  pls::loadingplot(object, ...)
+  if(inherits(object, "asca")){
+    HDANOVA::loadingplot(object, ...)
+  } else {
+    class(object) <- c("mvr", "list")
+    pls::loadingplot(object, ...)
+  }
 }
 
 #' @rdname plot.GEMpls
