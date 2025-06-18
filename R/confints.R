@@ -23,7 +23,7 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("A", "Left", "Right"))
 #' @param df.used Optional argument indicating how many degrees of freedom have been consumed during deflation. Default = 0.
 #' @param ... Further arguments to \code{qplot}.
 #'
-#' @seealso \code{\link{GEM}}, \code{\link{elastic}} and \code{\link{pls}}.
+#' @seealso Analyses using \code{GEM}: \code{\link{elastic}}, \code{\link{pca}}, \code{\link{sca}}, \code{\link{neuralnet}}, \code{\link{pls}}.
 #'
 #' @return An object of class \code{confints}, which holds
 #' the information needed to perform statistics or plot the
@@ -35,6 +35,9 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("A", "Left", "Right"))
 #' @importFrom gridExtra grid.arrange
 #' @examples
 #' data(MS)
+#' # Subset to reduce runtime in example
+#' MS$proteins <- MS$proteins[,1:70]
+#'
 #' # Compare MS and non-MS patients within group 1
 #' conf <- with(MS, confints(proteins[MS == "yes" & group == 1,],
 #'                           proteins[MS == "no"  & group == 1,]))
@@ -44,7 +47,8 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("A", "Left", "Right"))
 #'
 #' # Comparison repeated but based on ER matrices
 #' gem <- GEM(proteins ~ MS * group, data = MS)
-#' confGEM <- confints(gem, factor="MS:group", levels=c("yes.1","no.1"))
+#' print(effs <- colnames(gem$symbolicDesign)) # Inspect factor names
+#' confGEM <- confints(gem, factor=effs[3], levels=c("yes.1","no.1"))
 #' p1g <- plot(confGEM)
 #' p2g <- plot(confGEM, nonZero = TRUE) # Only intervals without 0.
 #' grid.arrange(p1g,p2g)
@@ -80,8 +84,9 @@ confints.default <-function(X1, X2, confidence = 0.95, df.used = 0, ...){
 #' @rdname confints
 #' @export
 confints.GEM <- function(X1, factor = 1, levels = c(1,2), confidence = 0.95, df.used = X1$df.used, ...){
+#  dat <- X1$LS[[factor]] + X1$residuals
   dat <- X1$ER.values[[factor]]
-  design <- X1$symbolicDesign[[factor]]
+  design <- X1$model.frame[-1][[factor]]
   df.used <- df.used + 0
   if(is.numeric(levels)){
     X1 <- dat[design==levels(design)[levels[1]],, drop=FALSE]

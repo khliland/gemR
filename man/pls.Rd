@@ -51,6 +51,9 @@ If using the \code{shave} options, the segment type is given as \code{type} inst
 }
 \examples{
 data(MS, package = "gemR")
+# Subset to reduce runtime in example
+MS$proteins <- MS$proteins[,1:70]
+
 gem <- GEM(proteins ~ MS * group, data = MS[-1,])
 
 # Simple PLS using interleaved cross-validation
@@ -83,5 +86,6 @@ loadingplot(plsModJ, scatter=TRUE) # scatter=TRUE for scatter plot
 }
 }
 \seealso{
-\code{\link{GEM}}, \code{\link{elastic}} and \code{\link{confints}}.
+Analyses using \code{GEM}: \code{\link{elastic}}, \code{\link{pca}}, \code{\link{sca}}, \code{\link{neuralnet}}.
+Confidence interval plots: \code{\link{confints}}. Convenience knock-in and knock-out of effects: \code{\link{knock.in}}.
 }

@@ -2,12 +2,15 @@
 % Please edit documentation in R/gem.R
 \name{GEM}
 \alias{GEM}
-\alias{print.GEM}
 \alias{plot.GEM}
 \alias{tableGEM}
+\alias{summary.GEM}
+\alias{gemR}
+\alias{print.GEM}
+\alias{print.summary.GEM}
 \title{General Effect Modelling}
 \usage{
-GEM(formula, data, contrasts = "contr.sum")
+GEM(formula, data, contrasts = "contr.sum", add_residuals = TRUE, ...)
 
 \method{print}{GEM}(x, ...)
 
@@ -26,6 +29,10 @@ GEM(formula, data, contrasts = "contr.sum")
 )
 
 tableGEM(object, variable)
+
+\method{summary}{GEM}(object, extended = TRUE, df = FALSE, ...)
+
+\method{print}{summary.GEM}(x, digits = 2, ...)
 }
 \arguments{
 \item{formula}{a model formula specifying features and effects.}
@@ -34,9 +41,11 @@ tableGEM(object, variable)
 
 \item{contrasts}{a \code{character} containing the primary contrasts for use with \code{mixlm::lm} (default = "contr.sum").}
 
-\item{x}{Object of class \code{GEM}.}
+\item{add_residuals}{Logical indicating if residuals should be added to the ER values (default = TRUE).}
 
 \item{...}{Additional arguments to \code{plot}}
+
+\item{x}{Object of class \code{GEM}.}
 
 \item{y}{Response name or number.}
 
@@ -60,6 +69,12 @@ a named model effect (can be combined with 'effect', see \code{Examples}).}
 \item{object}{GEM object.}
 
 \item{variable}{Numeric for selecting a variable for extraction.}
+
+\item{extended}{Extended output in summary (default = TRUE).}
+
+\item{df}{Show degrees of freedom in summary (default = FALSE).}
+
+\item{digits}{\code{integer} number of digits for printing.}
 }
 \value{
 \code{GEM} returns an object of class \code{GEM} containing effects, ER values (effect + residuals),
@@ -72,27 +87,31 @@ General Effect Modelling
 \examples{
 ## Multiple Sclerosis
 data(MS, package = "gemR")
-gem <- GEM(proteins ~ MS * group, data = MS)
+# Subset to reduce runtime in example
+MS$proteins <- MS$proteins[,1:70]
+
+gem <- GEM(proteins ~ group * MS, data = MS)
 print(gem)
+summary(gem)                                    # Summary of GEM
 plot(gem)                                       # Raw data, first feature
 plot(gem,2)                                     # Raw data, numbered feature
-plot(gem,'Q76L83', col='MS', pch='group')     # Selected colour and plot character
+plot(gem,'Q76L83', col='MS', pch='group')       # Selected colour and plot character
 plot(gem,'Q76L83', what='effect MS',
-     model.line='effect group')              # Comparison of factors (points and lines)
+     model.line='effect group')                 # Comparison of factors (points and lines)
+print(effs <- colnames(gem$symbolicDesign))     # Inspect factor names
+eeffs <- paste0("effect ", effs)
 \donttest{
   # Example compound plot
-  old.par <- par(c("mfrow", "mar"))
-  # on.exit(par(old.par))
-  par(mfrow = c(3,3), mar = c(2,4,4,1))
+  old.par <- par(mfrow = c(3,3), mar = c(2,4,4,1))
   plot(gem,'Q76L83')                         # Raw data, named feature
   plot(gem,'Q76L83', what='fits')            # Fitted values
   plot(gem,'Q76L83', what='residuals')       # Residuals
-  plot(gem,'Q76L83', what='effect MS')       # Effect levels
-  plot(gem,'Q76L83', what='effect group')    # ----||----
-  plot(gem,'Q76L83', what='effect MS:group') # ----||----
-  plot(gem,'Q76L83', what='MS')              # ER values
-  plot(gem,'Q76L83', what='group')           # --------||---------
-  plot(gem,'Q76L83', what='MS:group')        # --------||---------
+  plot(gem,'Q76L83', what=eeffs[1])           # Effect levels
+  plot(gem,'Q76L83', what=eeffs[2])           # ----||----
+  plot(gem,'Q76L83', what=eeffs[3])           # ----||----
+  plot(gem,'Q76L83', what=effs[1])            # ER values
+  plot(gem,'Q76L83', what=effs[2])            # --------||---------
+  plot(gem,'Q76L83', what=effs[3])            # --------||---------
   par(old.par)
 }
 
@@ -104,26 +123,49 @@ tab <- tableGEM(gem, 1)
 # gem3    <- GEM(proteins ~ MS * group + three, data = MS)
 
 
+## Candy assessment
+data(candies, package = "HDANOVA")
+gemC <- GEM(assessment ~ assessor*candy, data=candies)
+
+# Permutation testing
+gemC <- permutation(gemC)
+summary(gemC)
+
+# GEM-SCA with ellipsoids in score plots
+gemSCA <- sca(gemC)
+scoreplot(gemSCA, factor="candy", ellipsoids="confidence")
+
+# GEM-PCA with group colours
+gemPCA <- pca(gemC)
+scoreplot(gemPCA, factor="candy",
+  gr.col=gemPCA$symbolicDesign$candy)
+
+
 ## Lactobacillus
 data(Lactobacillus, package = "gemR")
+# Subset to reduce runtime in example
+Lactobacillus$proteome <- Lactobacillus$proteome[,50:100]
+
 gemLac <- GEM(proteome ~ strain * growthrate, data = Lactobacillus)
 print(gemLac)
 plot(gemLac)                            # Raw data, first feature
 plot(gemLac,2)                          # Raw data, numbered feature
 plot(gemLac,'P.LSA0316', col='strain',
-    pch='growthrate')                  # Selected colour and plot character
+    pch='growthrate')                   # Selected colour and plot character
 plot(gemLac,'P.LSA0316', what='strain',
-    model.line='growthrate')           # Selected model.line
+    model.line='growthrate')            # Selected model.line
 
 
-## Diabetes
-data(Diabetes, package = "gemR")
-gemDia <- GEM(transcriptome ~ surgery * T2D, data = Diabetes)
-print(gemDia)
-plot(gemDia)                            # Raw data, first feature
-plot(gemDia,2)                          # Raw data, numbered feature
-plot(gemDia,'ILMN_1720829', col='surgery',
-    pch='T2D')                         # Selected colour and plot character
+\dontrun{ # Don't run this example, it takes too long
+  ## Diabetes
+  data(Diabetes, package = "gemR")
+  gemDia <- GEM(transcriptome ~ surgery * T2D, data = Diabetes)
+  print(gemDia)
+  plot(gemDia)                            # Raw data, first feature
+  plot(gemDia,2)                          # Raw data, numbered feature
+  plot(gemDia,'ILMN_1720829', col='surgery',
+      pch='T2D')                          # Selected colour and plot character
+}
 
 }
 \references{
@@ -132,5 +174,6 @@ plot(gemDia,'ILMN_1720829', col='surgery',
 * E.F. Mosleth et al. (2020). Comprehensive Chemometrics, 2nd edition; Brown, S., Tauler, R., & Walczak, B. (Eds.). Chapter 4.22. Analysis of Megavariate Data in Functional Omics. Elsevier. <doi:10.1016/B978-0-12-409547-2.14882-6>
 }
 \seealso{
-Analyses using \code{GEM}: \code{\link{elastic}} and \code{\link{pls}}. Confidence interval plots: \code{\link{confints}}. Convenience knock-in and knock-out of effects: \code{\link{knock.in}}.
+Analyses using \code{GEM}: \code{\link{elastic}}, \code{\link{pca}}, \code{\link{sca}}, \code{\link{neuralnet}}, \code{\link{pls}}.
+Confidence interval plots: \code{\link{confints}}. Convenience knock-in and knock-out of effects: \code{\link{knock.in}}.
 }

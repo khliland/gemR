@@ -7,16 +7,21 @@
 #' @param newdata Optional new data matrix for prediction.
 #' @param validation Optional validation parameters.
 #' @param segments number of segments or list of segments (optional)
-#' @param measure Type of performance summary, default = 'class' (see \code{\link{glmnet}})
+#' @param measure Type of performance summary, default = 'class' (see \code{\link[glmnet]{glmnet}})
 #' @param family Type of model response, default = 'multinomial'.
-#' @param ... Additional arguments for \code{pls::cvsegments}.
+#' @param ... Additional arguments for \code{\link[glmnet]{glmnet}}.
 #'
-#' @seealso \code{\link{GEM}}, \code{\link{pls}} and \code{\link{confints}}.
+#' @seealso Analyses using \code{GEM}: \code{\link{pca}}, \code{\link{sca}}, \code{\link{neuralnet}}, \code{\link{pls}}.
+#' Confidence interval plots: \code{\link{confints}}. Convenience knock-in and knock-out of effects: \code{\link{knock.in}}.
 #'
 #' @importFrom glmnet cv.glmnet
+#' @importFrom stats rnorm
 #' @examples
 #' ## Multiple Sclerosis data
 #' data(MS, package = "gemR")
+#' # Subset to reduce runtime in example
+#' MS$proteins <- MS$proteins[,1:70]
+#'
 #' gem <- GEM(proteins ~ MS * group, data = MS)
 #' elasticMod <- elastic(gem, 'MS', validation = "CV")
 #' sum(elasticMod$classes == MS$MS)
@@ -27,7 +32,7 @@
 #' coefs     <- coef(elasticMod)
 #' (selected <- names(which(coefs[,1] != 0)))
 #'
-#' \donttest{
+#' \dontrun{ # Time consuming due to many variables
 #' ## Diabetes data
 #' data(Diabetes, package = "gemR")
 #' gem.Dia <- GEM(transcriptome ~ surgery * T2D, data = Diabetes)
