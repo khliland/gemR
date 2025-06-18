@@ -2,14 +2,15 @@
 % Please edit documentation in R/gem.R
 \name{GEM}
 \alias{GEM}
-\alias{print.GEM}
 \alias{plot.GEM}
 \alias{tableGEM}
 \alias{summary.GEM}
+\alias{gemR}
+\alias{print.GEM}
 \alias{print.summary.GEM}
 \title{General Effect Modelling}
 \usage{
-GEM(formula, data, contrasts = "contr.sum", ...)
+GEM(formula, data, contrasts = "contr.sum", add_residuals = TRUE, ...)
 
 \method{print}{GEM}(x, ...)
 
@@ -39,6 +40,8 @@ tableGEM(object, variable)
 \item{data}{a \code{data.frame} containing response variables (features) and design factors or other groupings/continuous variables.}
 
 \item{contrasts}{a \code{character} containing the primary contrasts for use with \code{mixlm::lm} (default = "contr.sum").}
+
+\item{add_residuals}{Logical indicating if residuals should be added to the ER values (default = TRUE).}
 
 \item{...}{Additional arguments to \code{plot}}
 
@@ -84,27 +87,31 @@ General Effect Modelling
 \examples{
 ## Multiple Sclerosis
 data(MS, package = "gemR")
-gem <- GEM(proteins ~ MS * group, data = MS)
+# Subset to reduce runtime in example
+MS$proteins <- MS$proteins[,1:70]
+
+gem <- GEM(proteins ~ group * MS, data = MS)
 print(gem)
+summary(gem)                                    # Summary of GEM
 plot(gem)                                       # Raw data, first feature
 plot(gem,2)                                     # Raw data, numbered feature
 plot(gem,'Q76L83', col='MS', pch='group')       # Selected colour and plot character
 plot(gem,'Q76L83', what='effect MS',
      model.line='effect group')                 # Comparison of factors (points and lines)
+print(effs <- colnames(gem$symbolicDesign))     # Inspect factor names
+eeffs <- paste0("effect ", effs)
 \donttest{
   # Example compound plot
-  old.par <- par(c("mfrow", "mar"))
-  # on.exit(par(old.par))
-  par(mfrow = c(3,3), mar = c(2,4,4,1))
+  old.par <- par(mfrow = c(3,3), mar = c(2,4,4,1))
   plot(gem,'Q76L83')                         # Raw data, named feature
   plot(gem,'Q76L83', what='fits')            # Fitted values
   plot(gem,'Q76L83', what='residuals')       # Residuals
-  plot(gem,'Q76L83', what='effect MS')       # Effect levels
-  plot(gem,'Q76L83', what='effect group')    # ----||----
-  plot(gem,'Q76L83', what='effect group') # ----||----
-  plot(gem,'Q76L83', what='MS')              # ER values
-  plot(gem,'Q76L83', what='group')           # --------||---------
-  plot(gem,'Q76L83', what='group')        # --------||---------
+  plot(gem,'Q76L83', what=eeffs[1])           # Effect levels
+  plot(gem,'Q76L83', what=eeffs[2])           # ----||----
+  plot(gem,'Q76L83', what=eeffs[3])           # ----||----
+  plot(gem,'Q76L83', what=effs[1])            # ER values
+  plot(gem,'Q76L83', what=effs[2])            # --------||---------
+  plot(gem,'Q76L83', what=effs[3])            # --------||---------
   par(old.par)
 }
 
@@ -136,6 +143,9 @@ scoreplot(gemPCA, factor="candy",
 
 ## Lactobacillus
 data(Lactobacillus, package = "gemR")
+# Subset to reduce runtime in example
+Lactobacillus$proteome <- Lactobacillus$proteome[,50:100]
+
 gemLac <- GEM(proteome ~ strain * growthrate, data = Lactobacillus)
 print(gemLac)
 plot(gemLac)                            # Raw data, first feature

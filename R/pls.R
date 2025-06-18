@@ -25,6 +25,9 @@
 #' @importFrom pls plsr cvsegments var.jack scores scoreplot loadings loadingplot corrplot R2 mvrValstats explvar
 #' @examples
 #' data(MS, package = "gemR")
+#' # Subset to reduce runtime in example
+#' MS$proteins <- MS$proteins[,1:70]
+#'
 #' gem <- GEM(proteins ~ MS * group, data = MS[-1,])
 #'
 #' # Simple PLS using interleaved cross-validation

@@ -12,8 +12,8 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{gridExtra}{\code{\link[gridExtra:arrangeGrob]{grid.arrange}}}
-
   \item{HDANOVA}{\code{\link[HDANOVA]{permutation}}}
+
+  \item{gridExtra}{\code{\link[gridExtra:arrangeGrob]{grid.arrange}}}
 }}
 

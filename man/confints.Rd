@@ -80,6 +80,9 @@ Confidence Intervals of Effect Differences
 }
 \examples{
 data(MS)
+# Subset to reduce runtime in example
+MS$proteins <- MS$proteins[,1:70]
+
 # Compare MS and non-MS patients within group 1
 conf <- with(MS, confints(proteins[MS == "yes" & group == 1,],
                           proteins[MS == "no"  & group == 1,]))
@@ -89,7 +92,8 @@ grid.arrange(p1,p2)
 
 # Comparison repeated but based on ER matrices
 gem <- GEM(proteins ~ MS * group, data = MS)
-confGEM <- confints(gem, factor="MS:group", levels=c("yes.1","no.1"))
+print(effs <- colnames(gem$symbolicDesign)) # Inspect factor names
+confGEM <- confints(gem, factor=effs[3], levels=c("yes.1","no.1"))
 p1g <- plot(confGEM)
 p2g <- plot(confGEM, nonZero = TRUE) # Only intervals without 0.
 grid.arrange(p1g,p2g)

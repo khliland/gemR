@@ -1,8 +1,10 @@
 #' General Effect Modelling
 #'
+#' @aliases GEM plot.GEM tableGEM summary.GEM gemR
 #' @param formula a model formula specifying features and effects.
 #' @param data a \code{data.frame} containing response variables (features) and design factors or other groupings/continuous variables.
 #' @param contrasts a \code{character} containing the primary contrasts for use with \code{mixlm::lm} (default = "contr.sum").
+#' @param add_residuals Logical indicating if residuals should be added to the ER values (default = TRUE).
 #' @param x Object of class \code{GEM}.
 #' @param y Response name or number.
 #' @param what What part of GEM to plot; \code{raw} data (default), \code{fits}, \code{residuals} or
@@ -40,28 +42,31 @@
 #' @examples
 #' ## Multiple Sclerosis
 #' data(MS, package = "gemR")
-#' gem <- GEM(proteins ~ MS * group, data = MS)
+#' # Subset to reduce runtime in example
+#' MS$proteins <- MS$proteins[,1:70]
+#'
+#' gem <- GEM(proteins ~ group * MS, data = MS)
 #' print(gem)
+#' summary(gem)                                    # Summary of GEM
 #' plot(gem)                                       # Raw data, first feature
 #' plot(gem,2)                                     # Raw data, numbered feature
 #' plot(gem,'Q76L83', col='MS', pch='group')       # Selected colour and plot character
 #' plot(gem,'Q76L83', what='effect MS',
 #'      model.line='effect group')                 # Comparison of factors (points and lines)
-#' print(colnames(gem$symbolicDesign))             # Inspect factor names
+#' print(effs <- colnames(gem$symbolicDesign))     # Inspect factor names
+#' eeffs <- paste0("effect ", effs)
 #' \donttest{
 #'   # Example compound plot
-#'   old.par <- par(c("mfrow", "mar"))
-#'   # on.exit(par(old.par))
-#'   par(mfrow = c(3,3), mar = c(2,4,4,1))
+#'   old.par <- par(mfrow = c(3,3), mar = c(2,4,4,1))
 #'   plot(gem,'Q76L83')                         # Raw data, named feature
 #'   plot(gem,'Q76L83', what='fits')            # Fitted values
 #'   plot(gem,'Q76L83', what='residuals')       # Residuals
-#'   plot(gem,'Q76L83', what='effect MS')       # Effect levels
-#'   plot(gem,'Q76L83', what='effect group')    # ----||----
-#'   plot(gem,'Q76L83', what='effect group:MS') # ----||----
-#'   plot(gem,'Q76L83', what='MS')              # ER values
-#'   plot(gem,'Q76L83', what='group')           # --------||---------
-#'   plot(gem,'Q76L83', what='group:MS')        # --------||---------
+#'   plot(gem,'Q76L83', what=eeffs[1])           # Effect levels
+#'   plot(gem,'Q76L83', what=eeffs[2])           # ----||----
+#'   plot(gem,'Q76L83', what=eeffs[3])           # ----||----
+#'   plot(gem,'Q76L83', what=effs[1])            # ER values
+#'   plot(gem,'Q76L83', what=effs[2])            # --------||---------
+#'   plot(gem,'Q76L83', what=effs[3])            # --------||---------
 #'   par(old.par)
 #' }
 #'
@@ -93,6 +98,9 @@
 #'
 #' ## Lactobacillus
 #' data(Lactobacillus, package = "gemR")
+#' # Subset to reduce runtime in example
+#' Lactobacillus$proteome <- Lactobacillus$proteome[,50:100]
+#'
 #' gemLac <- GEM(proteome ~ strain * growthrate, data = Lactobacillus)
 #' print(gemLac)
 #' plot(gemLac)                            # Raw data, first feature
@@ -115,7 +123,7 @@
 #' }
 #'
 #' @export
-GEM <- function(formula, data, contrasts = "contr.sum", ...){
+GEM <- function(formula, data, contrasts = "contr.sum", add_residuals = TRUE, ...){
   # Use HDANOVA as the work-horse before renaming elements
   HD <- hdanova(formula, data = data, contrasts = contrasts, ...)
   HD$models <- HD$models[1]
@@ -124,12 +132,18 @@ GEM <- function(formula, data, contrasts = "contr.sum", ...){
   # Dimensions
   dims <- c(N = ncol(HD$Y), p = nrow(HD$Y), eff = length(HD$LS))
 
-  ER.intercept <- matrix(colMeans(HD$Y), byrow = TRUE, nrow=nrow(HD$Y), ncol=ncol(HD$Y))+HD$residuals
+  ER.intercept <- matrix(colMeans(HD$Y), byrow = TRUE, nrow=nrow(HD$Y), ncol=ncol(HD$Y))
+  if(add_residuals)
+    ER.intercept <- ER.intercept + HD$residuals
   dimnames(ER.intercept) <- dimnames(HD$Y)
 
   HD$effectsOrig <- HD$effects
   HD$effects <- HD$LS
-  HD$ER.values <- c("(Intercept)"=list(ER.intercept), HD$more$LS_aug)
+  if(add_residuals){
+    HD$ER.values <- c("(Intercept)"=list(ER.intercept), HD$more$LS_aug)
+  } else {
+    HD$ER.values <- c("(Intercept)"=list(ER.intercept), HD$LS)
+  }
   HD$fitted.values <- HD$Y-HD$residuals
   HD$features <- HD$Y
   HD$design <- HD$X

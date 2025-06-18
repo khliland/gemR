@@ -19,6 +19,9 @@
 #' @examples
 #' ## Multiple Sclerosis data
 #' data(MS, package = "gemR")
+#' # Subset to reduce runtime in example
+#' MS$proteins <- MS$proteins[,1:70]
+#'
 #' gem <- GEM(proteins ~ MS * group, data = MS)
 #' elasticMod <- elastic(gem, 'MS', validation = "CV")
 #' sum(elasticMod$classes == MS$MS)
@@ -29,7 +32,7 @@
 #' coefs     <- coef(elasticMod)
 #' (selected <- names(which(coefs[,1] != 0)))
 #'
-#' \donttest{
+#' \dontrun{ # Time consuming due to many variables
 #' ## Diabetes data
 #' data(Diabetes, package = "gemR")
 #' gem.Dia <- GEM(transcriptome ~ surgery * T2D, data = Diabetes)
