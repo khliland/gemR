@@ -16,7 +16,7 @@
 \alias{explvar}
 \title{Plot function and extraction method for GEM-based PLS}
 \usage{
-\method{plot}{GEMpls}(x, y, ...)
+\method{plot}{GEMpls}(x, y, ylab = "error", xlab = "nvar", main = "Shaving", ...)
 
 \method{print}{GEMpls}(x, ...)
 
@@ -43,7 +43,16 @@ explvar(object, ...)
 
 \item{y}{Not used}
 
+\item{ylab}{\code{character} label for Y axis.}
+
+\item{xlab}{\code{character} label for X axis.}
+
+\item{main}{\code{character} main header.}
+
 \item{...}{additional arguments for \code{plot()}.}
+}
+\value{
+A plot of the PLS model's cross-validated accuracy or the Shaving results if available.
 }
 \description{
 Plot function and extraction method for GEM-based PLS

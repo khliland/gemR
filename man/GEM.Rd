@@ -88,7 +88,7 @@ General Effect Modelling
 ## Multiple Sclerosis
 data(MS, package = "gemR")
 # Subset to reduce runtime in example
-MS$proteins <- MS$proteins[,1:70]
+MS$proteins <- MS$proteins[,20:70]
 
 gem <- GEM(proteins ~ group * MS, data = MS)
 print(gem)
@@ -100,27 +100,25 @@ plot(gem,'Q76L83', what='effect MS',
      model.line='effect group')                 # Comparison of factors (points and lines)
 print(effs <- colnames(gem$symbolicDesign))     # Inspect factor names
 eeffs <- paste0("effect ", effs)
-\donttest{
-  # Example compound plot
-  old.par <- par(mfrow = c(3,3), mar = c(2,4,4,1))
-  plot(gem,'Q76L83')                         # Raw data, named feature
-  plot(gem,'Q76L83', what='fits')            # Fitted values
-  plot(gem,'Q76L83', what='residuals')       # Residuals
-  plot(gem,'Q76L83', what=eeffs[1])           # Effect levels
-  plot(gem,'Q76L83', what=eeffs[2])           # ----||----
-  plot(gem,'Q76L83', what=eeffs[3])           # ----||----
-  plot(gem,'Q76L83', what=effs[1])            # ER values
-  plot(gem,'Q76L83', what=effs[2])            # --------||---------
-  plot(gem,'Q76L83', what=effs[3])            # --------||---------
-  par(old.par)
-}
+# Example compound plot
+old.par <- par(mfrow = c(3,3), mar = c(2,4,4,1))
+plot(gem,'Q76L83')                         # Raw data, named feature
+plot(gem,'Q76L83', what='fits')            # Fitted values
+plot(gem,'Q76L83', what='residuals')       # Residuals
+plot(gem,'Q76L83', what=eeffs[1])           # Effect levels
+plot(gem,'Q76L83', what=eeffs[2])           # ----||----
+plot(gem,'Q76L83', what=eeffs[3])           # ----||----
+plot(gem,'Q76L83', what=effs[1])            # ER values
+plot(gem,'Q76L83', what=effs[2])            # --------||---------
+plot(gem,'Q76L83', what=effs[3])            # --------||---------
+par(old.par)
 
 # Complete overview of GEM
 tab <- tableGEM(gem, 1)
 
 # In general there can be more than two, effects, more than two levels, and continuous effects:
-# MS$three <- factor(c(rep(1:3,33),1:2))
-# gem3    <- GEM(proteins ~ MS * group + three, data = MS)
+MS$three <- factor(c(rep(1:3,33),1:2))
+gem3    <- GEM(proteins ~ MS * group + three, data = MS)
 
 
 ## Candy assessment

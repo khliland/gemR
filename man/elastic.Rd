@@ -39,6 +39,9 @@ elastic(gem, ...)
 
 \item{family}{Type of model response, default = 'multinomial'.}
 }
+\value{
+An object of class \code{GEMglmnet, cv.glmnet, list} containing the fitted Elastic-net model, classifications/predictions and data.
+}
 \description{
 Elastic-net modeling of GEM objects.
 }
@@ -46,7 +49,7 @@ Elastic-net modeling of GEM objects.
 ## Multiple Sclerosis data
 data(MS, package = "gemR")
 # Subset to reduce runtime in example
-MS$proteins <- MS$proteins[,1:70]
+MS$proteins <- MS$proteins[,20:70]
 
 gem <- GEM(proteins ~ MS * group, data = MS)
 elasticMod <- elastic(gem, 'MS', validation = "CV")
@@ -58,11 +61,11 @@ plot(elasticMod$glmnet.fit) # Coefficient trajectories
 coefs     <- coef(elasticMod)
 (selected <- names(which(coefs[,1] != 0)))
 
-\dontrun{ # Time consuming due to many variables
-## Diabetes data
-data(Diabetes, package = "gemR")
-gem.Dia <- GEM(transcriptome ~ surgery * T2D, data = Diabetes)
-elasticMod <- elastic(gem.Dia, 'T2D', validation = "LOO")
+\donttest{ # Time consuming due to many variables
+  ## Diabetes data
+  data(Diabetes, package = "gemR")
+  gem.Dia <- GEM(transcriptome ~ surgery * T2D, data = Diabetes)
+  elasticMod <- elastic(gem.Dia, 'T2D', validation = "LOO")
 }
 }
 \seealso{

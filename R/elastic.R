@@ -14,13 +14,15 @@
 #' @seealso Analyses using \code{GEM}: \code{\link{pca}}, \code{\link{sca}}, \code{\link{neuralnet}}, \code{\link{pls}}.
 #' Confidence interval plots: \code{\link{confints}}. Convenience knock-in and knock-out of effects: \code{\link{knock.in}}.
 #'
+#' @return An object of class \code{GEMglmnet, cv.glmnet, list} containing the fitted Elastic-net model, classifications/predictions and data.
+#'
 #' @importFrom glmnet cv.glmnet
 #' @importFrom stats rnorm
 #' @examples
 #' ## Multiple Sclerosis data
 #' data(MS, package = "gemR")
 #' # Subset to reduce runtime in example
-#' MS$proteins <- MS$proteins[,1:70]
+#' MS$proteins <- MS$proteins[,20:70]
 #'
 #' gem <- GEM(proteins ~ MS * group, data = MS)
 #' elasticMod <- elastic(gem, 'MS', validation = "CV")
@@ -32,11 +34,11 @@
 #' coefs     <- coef(elasticMod)
 #' (selected <- names(which(coefs[,1] != 0)))
 #'
-#' \dontrun{ # Time consuming due to many variables
-#' ## Diabetes data
-#' data(Diabetes, package = "gemR")
-#' gem.Dia <- GEM(transcriptome ~ surgery * T2D, data = Diabetes)
-#' elasticMod <- elastic(gem.Dia, 'T2D', validation = "LOO")
+#' \donttest{ # Time consuming due to many variables
+#'   ## Diabetes data
+#'   data(Diabetes, package = "gemR")
+#'   gem.Dia <- GEM(transcriptome ~ surgery * T2D, data = Diabetes)
+#'   elasticMod <- elastic(gem.Dia, 'T2D', validation = "LOO")
 #' }
 #' @export
 elastic <- function(gem, ...){
@@ -78,22 +80,28 @@ elastic.GEM <- function(gem, effect, alpha = 0.5, newdata = NULL, validation, se
     cv <- unlist(lapply(1:length(cv), function(i) rep(i,length(cv[[i]]))))[order(unlist(cv))]
   }
   # glmnet.data     <- glmnet(data$X,data$y)
-  cv.glm     <- cv.glmnet(data$X,data$y, alpha=alpha, foldid = cv, grouped=FALSE, type.measure='class', family = "multinomial")
-  co         <- coef(cv.glm, s='lambda.min', exact=TRUE)
-  c.vector   <- as.numeric(co[[2]]); names(c.vector) <- rownames(co)
-  temp       <- sort(c.vector)
-  inds       <- which(c.vector!=0)
+  if(is.factor(data$y))
+    object     <- cv.glmnet(data$X,data$y, alpha=alpha, foldid = cv, grouped=FALSE, family = "multinomial")
+  else
+    object   <- cv.glmnet(data$X,data$y, alpha=alpha, foldid = cv, grouped=FALSE, family = "gaussian")
+  #co         <- coef(object, s='lambda.min', exact=TRUE)
+  #c.vector   <- as.numeric(co[[2]]); names(c.vector) <- rownames(co)
+  #temp       <- sort(c.vector)
+  #inds       <- which(c.vector!=0)
 
   if(!is.null(newdata)){
-    classEl <- factor(cv.glm$glmnet.fit$classnames)[apply(predict(cv.glm, newdata),1,which.max)]
+    if(is.factor(data$y))
+      classEl <- factor(object$glmnet.fit$classnames)[apply(predict(object, newdata),1,which.max)]
+    else
+      classEl <- predict(object, newdata)
   } else {
-    classEl <- factor(cv.glm$glmnet.fit$classnames)[apply(predict(cv.glm, data$X),1,which.max)]
+    if(is.factor(data$y))
+      object$classes <- factor(object$glmnet.fit$classnames)[apply(predict(object, data$X),1,which.max)]
+    else
+      object$preds <- predict(object, data$X)
   }
 
-  object <- cv.glm
-  object$classes <- classEl
   object$data <- data
-  # object <- list(classes = classEl, data = data, glmnet = cv.glm)
   class(object) <- c('GEMglmnet','cv.glmnet','list')
   object
 }

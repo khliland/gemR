@@ -81,7 +81,7 @@ Confidence Intervals of Effect Differences
 \examples{
 data(MS)
 # Subset to reduce runtime in example
-MS$proteins <- MS$proteins[,1:70]
+MS$proteins <- MS$proteins[,20:70]
 
 # Compare MS and non-MS patients within group 1
 conf <- with(MS, confints(proteins[MS == "yes" & group == 1,],

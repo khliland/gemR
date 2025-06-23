@@ -26,38 +26,40 @@
 #' @examples
 #' data(MS, package = "gemR")
 #' # Subset to reduce runtime in example
-#' MS$proteins <- MS$proteins[,1:70]
+#' MS$proteins <- MS$proteins[,20:70]
 #'
 #' gem <- GEM(proteins ~ MS * group, data = MS[-1,])
 #'
 #' # Simple PLS using interleaved cross-validation
 #' plsMod <- pls(gem, 'MS', 6, validation = "CV",
 #'               segment.type = "interleaved", length.seg = 25)
+#' plot(plsMod)
 #' scoreplot(plsMod, labels = "names")
 #'
 #' # PLS with shaving of variables (mind different variable for cross-validation type)
 #' plsModS <- pls(gem, 'MS', 6, validation = "CV",
 #'               type = "interleaved", length.seg=25, shave = TRUE)
 #' # Error as a function of remaining variables
-#' plot(plsModS$shave)
+#' plot(plsModS)
 #' # Selected variables for minimum error
 #' with(plsModS$shave, colnames(X)[variables[[min.red+1]]])
 #'
 #' \donttest{ # Time consuming due to leave-one-out cross-validation
-#' plsModJ <- pls(gem, 'MS', 5, validation = "LOO",
+#'   plsModJ <- pls(gem, 'MS', 5, validation = "LOO",
 #'               jackknife = TRUE)
-#' colSums(plsModJ$classes == as.numeric(MS$MS[-1]))
-#' # Jackknifed coefficient P-values (sorted)
-#' plot(sort(plsModJ$jack[,1,1]), pch = '.', ylab = 'P-value')
-#' abline(h=c(0.01,0.05),col=2:3)
+#'   colSums(plsModJ$classes == as.numeric(MS$MS[-1]))
+#'   # Jackknifed coefficient P-values (sorted)
+#'   plot(sort(plsModJ$jack[,1,1]), pch = '.', ylab = 'P-value')
+#'   abline(h=c(0.01,0.05),col=2:3)
 #'
-#' scoreplot(plsModJ)
-#' scoreplot(plsModJ, comps=c(1,3))   # Selected components
-#' # Use MS categories for colouring and clusters for plot characters.
-#' scoreplot(plsModJ, col = gem$symbolicDesign[['MS']],
+#'   scoreplot(plsModJ)
+#'   scoreplot(plsModJ, comps=c(1,3))   # Selected components
+#'   # Use MS categories for colouring and clusters for plot characters.
+#'   scoreplot(plsModJ, col = gem$symbolicDesign[['MS']],
 #'                   pch = 20+as.numeric(gem$symbolicDesign[['group']]))
-#' loadingplot(plsModJ, scatter=TRUE) # scatter=TRUE for scatter plot
+#'   loadingplot(plsModJ, scatter=TRUE) # scatter=TRUE for scatter plot
 #' }
+#' @return An object of class \code{GEMpls, mvr, list} containing the fitted PLS model, classifications/predictions, data and optionally Jackknife or Shaving results.
 #' @rdname pls
 #' @export
 pls <- function(gem, ...){
