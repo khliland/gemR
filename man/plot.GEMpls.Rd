@@ -57,3 +57,6 @@ A plot of the PLS model's cross-validated accuracy or the Shaving results if ava
 \description{
 Plot function and extraction method for GEM-based PLS
 }
+\seealso{
+\code{\link{pls}} has examples of how to use this function.
+}

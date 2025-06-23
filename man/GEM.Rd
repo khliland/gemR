@@ -154,7 +154,7 @@ plot(gemLac,'P.LSA0316', what='strain',
     model.line='growthrate')            # Selected model.line
 
 
-\dontrun{ # Don't run this example, it takes too long
+\donttest{ # Don't run this example, it takes too long
   ## Diabetes
   data(Diabetes, package = "gemR")
   gemDia <- GEM(transcriptome ~ surgery * T2D, data = Diabetes)

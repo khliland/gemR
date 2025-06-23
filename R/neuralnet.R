@@ -1,7 +1,8 @@
 #' Neural Network by Multilayer Perceptron
 #'
 #' @param object Object of class \code{GEM}.
-#' @param factor The factor to be used as response.
+#' @param formula A formula specifying the model to be fitted. If not provided, the response variable is taken from the \code{GEM} object.
+#' @param factor The factor to be used as response. If \code{formula} is provided, this is ignored.
 #' @param hidden Vector with numbers of neurons in the hidden layers.
 #' @param linear.output Logical. If \code{TRUE} the output layer is linear, otherwise it is logistic.
 #' @param ... Additional arguments passed to \code{neuralnet}.
@@ -22,13 +23,21 @@
 #'
 #' # Network weights (input and hidden layers)
 #' nn$weights
-neuralnet <- function(object, factor = 1, hidden = c(2), linear.output = FALSE, ...){
+neuralnet <- function(object, formula, factor = 1, hidden = c(2), linear.output = FALSE, ...){
+  if(missing(formula)){
+    nam <- names(object$symbolicDesign)
+    names(nam) <- nam
+    formula <- stats::formula(paste0(nam[factor], "~."))
+  } else {
+    factor <- as.character(formula[[2]])
+  }
+
   if(is.numeric(factor))
     factor <- names(object$LS)[factor]
   dat <- data.frame(object$ER.values[[factor]])
   dat[[factor]] <- object$symbolicDesign[[factor]]
-  nnMod <- neuralnet::neuralnet(formula(paste0(factor, "~.")), data = dat,
-                          hidden = c(2), linear.output = FALSE)
+  nnMod <- neuralnet::neuralnet(formula, data = dat,
+                          hidden = hidden, linear.output = linear.output, ...)
   nnMod
 }
 

@@ -62,13 +62,14 @@ gem <- GEM(proteins ~ MS * group, data = MS[-1,])
 # Simple PLS using interleaved cross-validation
 plsMod <- pls(gem, 'MS', 6, validation = "CV",
               segment.type = "interleaved", length.seg = 25)
+plot(plsMod)
 scoreplot(plsMod, labels = "names")
 
 # PLS with shaving of variables (mind different variable for cross-validation type)
 plsModS <- pls(gem, 'MS', 6, validation = "CV",
               type = "interleaved", length.seg=25, shave = TRUE)
 # Error as a function of remaining variables
-plot(plsModS$shave)
+plot(plsModS)
 # Selected variables for minimum error
 with(plsModS$shave, colnames(X)[variables[[min.red+1]]])
 

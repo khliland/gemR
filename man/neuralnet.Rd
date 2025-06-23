@@ -4,12 +4,21 @@
 \alias{neuralnet}
 \title{Neural Network by Multilayer Perceptron}
 \usage{
-neuralnet(object, factor = 1, hidden = c(2), linear.output = FALSE, ...)
+neuralnet(
+  object,
+  formula,
+  factor = 1,
+  hidden = c(2),
+  linear.output = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{Object of class \code{GEM}.}
 
-\item{factor}{The factor to be used as response.}
+\item{formula}{A formula specifying the model to be fitted. If not provided, the response variable is taken from the \code{GEM} object.}
+
+\item{factor}{The factor to be used as response. If \code{formula} is provided, this is ignored.}
 
 \item{hidden}{Vector with numbers of neurons in the hidden layers.}
 
