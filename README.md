@@ -3,7 +3,7 @@
 ## Installation
 
 ``` r
-# Install release version from CRAN (planned release February 2024)  
+# Install release version from CRAN 
 install.packages("gemR")  
 # Install development version from GitHub  
 devtools::install_github("khliland/gemR")
@@ -18,4 +18,5 @@ devtools::install_github("khliland/gemR")
 - Supervised analyses of effects and residuals
     - Partial Least Squares
     - Elastic net
+    - Neural Networks
 - Confidence intervals
