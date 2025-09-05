@@ -15,6 +15,10 @@
 #'
 #' @examples
 #' data(MS, package = "gemR")
+#'
+#' # Subset to reduce runtime in example
+#' MS$proteins <- MS$proteins[,20:70]
+#'
 #' gem <- GEM(proteins ~ MS * group, data = MS)
 #'
 #' # Extract interaction between 'MS' and 'group

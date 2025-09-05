@@ -36,6 +36,9 @@ neuralnet <- function(object, formula, factor = 1, hidden = c(2), linear.output 
     factor <- names(object$LS)[factor]
   dat <- data.frame(object$ER.values[[factor]])
   dat[[factor]] <- object$symbolicDesign[[factor]]
+  if(!requireNamespace("neuralnet", quietly = TRUE))
+    stop("Package 'neuralnet' needed for this function to work. Please install it.",
+         call. = FALSE)
   nnMod <- neuralnet::neuralnet(formula, data = dat,
                           hidden = hidden, linear.output = linear.output, ...)
   nnMod

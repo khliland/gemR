@@ -1,7 +1,6 @@
-#' @aliases pls pls.GEM
-#' @name pls
+#' @aliases pls.GEM
 #' @title Partial Least Squares modelling of GEM objects.
-#' @param gem Object of class \code{GEM}.
+#' @param object Object of class \code{GEM}.
 #' @param effect The effect to be used as response.
 #' @param ncomp Number of PLS components.
 #' @param newdata Optional new data matrix for prediction.
@@ -60,36 +59,27 @@
 #'   loadingplot(plsModJ, scatter=TRUE) # scatter=TRUE for scatter plot
 #' }
 #' @return An object of class \code{GEMpls, mvr, list} containing the fitted PLS model, classifications/predictions, data and optionally Jackknife or Shaving results.
-#' @rdname pls
 #' @export
-pls <- function(gem, ...){
-  UseMethod("pls")
-}
-# setGeneric("pls")
-
-#' @rdname pls
-#' @method pls GEM
-#' @export
-pls.GEM <- function(gem, effect, ncomp, newdata = NULL, gem2, validation, jackknife = NULL, shave = NULL, df.used = gem$df.used, ...){
+pls.GEM <- function(object, effect, ncomp, newdata = NULL, gem2, validation, jackknife = NULL, shave = NULL, df.used = object$df.used, ...){
   classification <- FALSE
   if(!missing(gem2)){
-    data <- data.frame(X = I(gem$ER.values[[effect]]),
+    data <- data.frame(X = I(object$ER.values[[effect]]),
                        y = I(gem2$ER.values[[effect]]))
     lda    <- NULL
   } else {
     if(length(effect) == 1){
-      if(is.factor(gem$symbolicDesign[[effect]])){
+      if(is.factor(object$symbolicDesign[[effect]])){
         classification <- TRUE
-        data <- data.frame(X = I(gem$ER.values[[effect]]),
-                           y = I(gem$symbolicDesign[[effect]]),
-                           Yd = I(model.matrix(~y-1,data.frame(y=gem$symbolicDesign[[effect]]))))
+        data <- data.frame(X = I(object$ER.values[[effect]]),
+                           y = I(object$symbolicDesign[[effect]]),
+                           Yd = I(model.matrix(~y-1,data.frame(y=object$symbolicDesign[[effect]]))))
       } else {
-        data <- data.frame(X = I(gem$ER.values[[effect]]),
-                           y = I(gem$symbolicDesign[[effect]]),
-                           Yd = gem$symbolicDesign[[effect]])
+        data <- data.frame(X = I(object$ER.values[[effect]]),
+                           y = I(object$symbolicDesign[[effect]]),
+                           Yd = object$symbolicDesign[[effect]])
       }
     } else { # User supplied contrast
-      data <- data.frame(X = I(gem$ER.values[[effect[[1]]]]),
+      data <- data.frame(X = I(object$ER.values[[effect[[1]]]]),
                          y = effect[[2]],
                          Yd = effect[[2]])
     }
@@ -151,7 +141,7 @@ pls.GEM <- function(gem, effect, ncomp, newdata = NULL, gem2, validation, jackkn
   object$data    <- data
   object$effect  <- effect
   object$call.GEMpls <- match.call()
-  object$gem     <- gem
+  object$object     <- object
   # object <- list(classes = lda, data = data, pls = plsMod)
   if(jack)
     object$jack <- jt
@@ -163,3 +153,8 @@ pls.GEM <- function(gem, effect, ncomp, newdata = NULL, gem2, validation, jackkn
   }
   object
 }
+
+#' @importFrom HDANOVA pls
+#' @export
+HDANOVA::pls
+

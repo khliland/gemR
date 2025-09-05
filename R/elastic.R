@@ -16,7 +16,6 @@
 #'
 #' @return An object of class \code{GEMglmnet, cv.glmnet, list} containing the fitted Elastic-net model, classifications/predictions and data.
 #'
-#' @importFrom glmnet cv.glmnet
 #' @importFrom stats rnorm
 #' @examples
 #' ## Multiple Sclerosis data
@@ -80,10 +79,13 @@ elastic.GEM <- function(gem, effect, alpha = 0.5, newdata = NULL, validation, se
     cv <- unlist(lapply(1:length(cv), function(i) rep(i,length(cv[[i]]))))[order(unlist(cv))]
   }
   # glmnet.data     <- glmnet(data$X,data$y)
+  if(!requireNamespace("glmnet", quietly = TRUE))
+    stop("Package 'glmnet' needed for this function to work. Please install it.",
+         call. = FALSE)
   if(is.factor(data$y))
-    object     <- cv.glmnet(data$X,data$y, alpha=alpha, foldid = cv, grouped=FALSE, family = "multinomial")
+    object   <- glmnet::cv.glmnet(data$X,data$y, alpha=alpha, foldid = cv, grouped=FALSE, family = "multinomial")
   else
-    object   <- cv.glmnet(data$X,data$y, alpha=alpha, foldid = cv, grouped=FALSE, family = "gaussian")
+    object   <- glmnet::cv.glmnet(data$X,data$y, alpha=alpha, foldid = cv, grouped=FALSE, family = "gaussian")
   #co         <- coef(object, s='lambda.min', exact=TRUE)
   #c.vector   <- as.numeric(co[[2]]); names(c.vector) <- rownames(co)
   #temp       <- sort(c.vector)

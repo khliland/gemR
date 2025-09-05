@@ -2,8 +2,8 @@ Encoding: UTF-8
 Package: gemR
 Type: Package
 Title: General Effect Modelling
-Version: 1.2.1
-Date: 2025-06-23
+Version: 1.2.2
+Date: 2025-09-04
 Authors@R: c(person("Kristian Hovde", "Liland", role = c("aut", "cre"),
                      email = "kristian.liland@nmbu.no"),
               person("Ellen Færgestad", "Mosleth", role = "ctb"))
@@ -14,14 +14,14 @@ Description: Two-step modeling with separation of sources of variation through a
 Depends: R (>= 3.5.0)
 Imports: ggplot2, 
   scales, 
-  gridExtra, 
-  glmnet, 
+  gridExtra,
+  mixlm,
   pls, 
   plsVarSel, 
-  mixlm, 
-  HDANOVA, 
+  HDANOVA (>= 0.8.4), 
   lme4, 
-  pracma,
+  pracma
+Suggests: glmnet, 
   neuralnet
 License: GPL
 LazyData: TRUE
